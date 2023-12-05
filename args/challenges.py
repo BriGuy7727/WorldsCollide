@@ -26,6 +26,8 @@ def parse(parser):
                             help = "Remove spells from learnable sources: Items, Espers, Natural Magic, and Objectives")
     challenges.add_argument("-nosaves", "--no-saves", action = "store_true",
                             help = "Ironmog Mode: You cannot save (but save points still work for Tents/Sleeping Bags)")
+    challenges.add_argument("-kprac", "--kprac", action = "store_true",
+                            help = "Final Kefka Practice Mode")
 
 def process(args):
     from constants.spells import black_magic_ids, white_magic_ids, gray_magic_ids, spell_id
@@ -93,6 +95,8 @@ def flags(args):
         flags += f" -rls {args.remove_learnable_spells}"
     if args.no_saves:
         flags += " -nosaves"
+    if args.kprac:
+        flags += " -kprac"
 
     return flags
 
@@ -114,6 +118,7 @@ def options(args):
         ("Ultima", ultima, "ultima"),
         ("Remove Learnable Spells", args.remove_learnable_spell_ids, "remove_learnable_spell_ids"),
         ("No Saves", args.no_saves, "no_saves"),
+        ("Kefka Practice", args.kprac, "kprac"),
     ]
         
     return opts

@@ -144,11 +144,33 @@ class Enemies():
                 enemy.hp *= 3
             elif boss_name in hp2x:
                 enemy.hp *= 2
+        
+        # lower Intangir's health by at least half?
+        self.enemies[self.get_enemy("Intangir")].hp = self.enemies[self.get_enemy("Intangir")].hp // 2
+
+        # lower Outsider's speed by at least half?
+        self.enemies[self.get_enemy("Outsider")].speed = self.enemies[self.get_enemy("Outsider")].speed // 2
+        #setattr(enemy, "speed", 20)
 
     def boss_experience(self):
         from data.bosses_custom_exp import custom_exp
+        #from data.bosses_custom_exp import alt_exp
         for enemy_id, exp in custom_exp.items():
             self.enemies[enemy_id].exp = exp * self.enemies[enemy_id].level
+        #for enemy_id, exp in alt_exp.items():
+        self.enemies[self.get_enemy("KatanaSoul")].exp = 140 * self.enemies[enemy_id].level
+        self.enemies[self.get_enemy("L.90 Magic")].exp = 75 * self.enemies[enemy_id].level
+        self.enemies[self.get_enemy("L.80 Magic")].exp = 75 * self.enemies[enemy_id].level
+        self.enemies[self.get_enemy("L.70 Magic")].exp = 50 * self.enemies[enemy_id].level
+        self.enemies[self.get_enemy("L.60 Magic")].exp = 75 * self.enemies[enemy_id].level
+        self.enemies[self.get_enemy("L.50 Magic")].exp = 50 * self.enemies[enemy_id].level
+        self.enemies[self.get_enemy("L.30 Magic")].exp = 50 * self.enemies[enemy_id].level
+        self.enemies[self.get_enemy("L.20 Magic")].exp = 50 * self.enemies[enemy_id].level
+        self.enemies[self.get_enemy("L.10 Magic")].exp = 50 * self.enemies[enemy_id].level
+        self.enemies[self.get_enemy("Master Pug")].exp = 110 * self.enemies[enemy_id].level
+        self.enemies[self.get_enemy("Intangir")].exp = 230 * self.enemies[enemy_id].level
+        self.enemies[self.get_enemy("CzarDragon")].exp = 200 * self.enemies[enemy_id].level
+
 
     def boss_normalize_distort_stats(self):
         import random
@@ -352,7 +374,14 @@ class Enemies():
             if enemy.id in bosses.enemy_name or enemy.id == self.SRBEHEMOTH2_ID or enemy.id == self.INVINCIBLE_GUARDIAN_ID:
                 continue
 
-            enemy.no_run = random.random() >= escapable_percent
+            # if in the alt boss pack as harder mobs, set un-runnable flag
+            if enemy.id in bosses.alt_enemy_name:
+                #if self.args.boss_battles_enemies:
+                    enemy.no_run = 1
+                #else:
+                    #enemy.no_run = random.random() >= escapable_percent
+            else:
+                enemy.no_run = random.random() >= escapable_percent
 
     def no_undead_bosses(self):
         boss_ids = list(bosses.enemy_name.keys())

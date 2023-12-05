@@ -259,11 +259,169 @@ removed_enemy_name = {
     363 : "Phunbaba 2",
 }
 
+alt_enemy_name = {
+    189 : "Outsider",
+    106 : "Madam",
+    246 : "Innoc",
+    358 : "MagiMaster",
+    217 : "Dueller",
+    252 : "Sky Base",
+    38  : "Brachosaur",
+    364 : "Phunbaba 3",
+    365 : "Phunbaba 4",
+    37  : "Doom Drgn",
+    292 : "KatanaSoul",
+    308 : "Head",
+    7   : "Retainer",
+    13  : "Dark Force",
+    261 : "Prometheus",
+    262 : "GhostTrain",
+    356 : "L.90 Magic",
+    313 : "L.60 Magic",
+    313 : "Shiva",
+    265 : "Ifrit",
+    269 : "Left Crane",
+    270 : "Right Crane",
+    355 : "L.80 Magic",
+    293 : "L.30 Magic",
+    304 : "L.20 Magic",
+    306 : "L.10 Magic",
+    323 : "L.70 Magic",
+    307 : "L.50 Magic",
+    103 : "Covert",
+    104 : "Ogor",
+    274 : "Guardian",
+    84  : "Pug",
+    279 : "AtmaWeapon",
+    312 : "Master Pug",
+    281 : "SrBehemoth",
+    283 : "BR Tentacle",
+    316 : "BL Tentacle",
+    317 : "TR Tentacle",
+    318 : "TL Tentacle",
+    284 : "Dullahan",
+    286 : "Chadarnook (Painting)",
+    328 : "Chadarnook (Demon)",
+    275 : "Air Force",
+    325 : "Laser Gun",
+    326 : "Speck",
+    327 : "MissileBay",
+    287 : "Curley",
+    288 : "Larry",
+    289 : "Moe",
+    290 : "Wrexsoul",
+    359 : "SoulSaver",
+    285 : "Doom Gaze",
+    291 : "Hidon",
+    294 : "Hidonite1",
+    352 : "Hidonite2",
+    353 : "Hidonite3",
+    354 : "Hidonite4",
+    295 : "Doom",
+    296 : "Goddess",
+    297 : "Poltrgeist",
+    163 : "Intangir",
+    240 : "Tap Dancer",
+    311 : "CzarDragon",
+    381 : "Atma",
+    268 : "Inferno",
+    321 : "Rough",
+    322 : "Striker",
+    324 : "Tritoch",
+}
+
+alt_pack_name = {
+    262 : "Madam, Outsider x2",
+    274 : "Innoc x3",
+    302 : "Dueller x2, Sky Base",
+    352 : "L.70 Magic x2, L.50 Magic",
+    320 : "Doom Drgn x2",
+    322 : "Retainer x2, Dark Force",
+    323 : "Prometheus",
+    324 : "GhostTrain",
+    325 : "L.60 Magic, L.90 Magic",
+    326 : "Ifrit/Shiva",
+    327 : "Cranes",
+    328 : "L.80 Magic, L.90 Magic",
+    329 : "L.30 Magic, L.20 Magic, L.10 Magic",
+    335 : "Pug",
+    336 : "AtmaWeapon",
+    337 : "Master Pug",
+    338 : "SrBehemoth",
+    340 : "Tentacles",
+    341 : "Dullahan",
+    342 : "Chadarnook",
+    345 : "Air Force",
+    346 : "Stooges",
+    348 : "Wrexsoul",
+    349 : "Doom Gaze",
+    350 : "Hidon",
+    354 : "Doom",
+    355 : "Goddess",
+    356 : "Poltrgeist",
+    359 : "Intangir",
+    360 : "Covert x2, Tap Dancer",
+    363 : "KatanaSoul",
+    368 : "Atma",
+    370 : "Inferno",
+    373 : "Covert, Ogor",
+    375 : "Tritoch",
+    381 : "Dueller x2, Sky Base",
+    386 : "Phunbaba 3",
+    387 : "Phunbaba 4",
+    396 : "Guardian", # defeatable guardian in kefka's tower
+    401 : "MagiMaster",
+}
+
+alt_formation_name = {
+    428 : "Madam, Outsider x2",                         # Marshal
+    400 : "Innoc x3",                                   # Rizopas
+    354 : "MagiMaster",
+    398 : "Dueller x2, Sky Base",                       # Ultros 3
+    322 : "Brachosaur",                                 # Leader
+    422 : "Phunbaba 3",
+    423 : "Phunbaba 4",
+    226 : "Doom Drgn x2",                               # Whelk
+    426 : "Retainer x2, Dark Force",                    # Vargas
+    397 : "Prometheus",                                 # TunnelArmr
+    437 : "GhostTrain",
+    472 : "L.60 Magic, L.90 Magic",                     # Dadaluma
+    439 : "Ifrit/Shiva",
+    440 : "Cranes",
+    394 : "L.80 Magic, L.90 Magic",                     # Number 024
+    172 : "L.30 Magic, L.20 Magic, L.10 Magic",         # Number 128
+    347 : "Covert, Ogor",                               # Umaro
+    446 : "Guardian",
+    253 : "Pug",                                        # FlameEater
+    450 : "AtmaWeapon",
+    483 : "Master Pug",                                 # Nerapa                        
+    452 : "SrBehemoth",
+    454 : "Tentacles",
+    455 : "Dullahan",
+    456 : "Chadarnook",
+    459 : "Air Force",
+    460 : "Stooges",
+    462 : "Wrexsoul",
+    463 : "Doom Gaze",
+    464 : "Hidon",
+    468 : "Doom",
+    469 : "Goddess",
+    470 : "Poltrgeist",
+    210 : "Intangir",                                   # Ultros 1
+    350 : "Covert x2, Tap Dancer",                      # Ultros 2
+    465 : "KatanaSoul",                                 # Ultros/Chupon
+    482 : "Atma",
+    484 : "Inferno",
+    487 : "Tritoch",
+    561 : "L.70 Magic x2, L.50 Magic",                  # Kefka (Narshe)
+}
+
 pack_name = {}
 pack_name.update(final_battle_pack_name)
 pack_name.update(dragon_pack_name)
 pack_name.update(normal_pack_name)
 pack_name.update(removed_pack_name)
+#pack_name.update(alt_pack_name)
 
 name_pack = {v: k for k, v in pack_name.items()}
 
@@ -272,6 +430,7 @@ formation_name.update(final_battle_formation_name)
 formation_name.update(dragon_formation_name)
 formation_name.update(normal_formation_name)
 formation_name.update(removed_formation_name)
+#formation_name.update(alt_formation_name)
 
 name_formation = {v: k for k, v in formation_name.items()}
 
@@ -280,6 +439,7 @@ enemy_name.update(final_battle_enemy_name)
 enemy_name.update(dragon_enemy_name)
 enemy_name.update(normal_enemy_name)
 enemy_name.update(removed_enemy_name)
+#enemy_name.update(alt_enemy_name)
 
 name_enemy = {v: k for k, v in enemy_name.items()}
 

@@ -386,12 +386,94 @@ class EnemyPacks():
         if not self.args.fixed_encounters_original:
             self.randomize_fixed()
 
+        #if self.args.boss_battles_enemies:
+            ###### Update boss packs with enemies
+
+            # Marshal -> Madam, Outsider x2
+            
+            self.packs[262].formations[0] = 428
+            self.packs[262].formations[1] = 428
+
+            # Rizopas -> Innoc x3
+            self.packs[274].formations[0] = 400
+            self.packs[274].formations[1] = 400
+
+            # Ultros 3 -> Dueller x2, Sky Base
+            self.packs[381].formations[0] = 398
+            self.packs[381].formations[1] = 398
+
+            # Leader -> Brachosaur
+            self.packs[302].formations[0] = 322
+            self.packs[302].formations[1] = 322
+
+            # Phunbaba 3 -> Ice Dragon x5
+            #self.packs[386].formations[0] = 553
+            #self.packs[386].formations[1] = 553
+
+            # Whelk -> Doom Drgn x2
+            self.packs[320].formations[0] = 226
+            self.packs[320].formations[1] = 226
+
+            # Vargas -> Retainer x2, Dark Force
+            self.packs[322].formations[0] = 426
+            self.packs[322].formations[1] = 426
+
+            # TunnelArmr -> Prometheus
+            self.packs[323].formations[0] = 397
+            self.packs[323].formations[1] = 397
+
+            # Dadaluma -> L.60 Magic, L.90 Magic
+            self.packs[325].formations[0] = 472
+            self.packs[325].formations[1] = 472
+
+            # Number 024 -> L.80 Magic, L.90 Magic
+            self.packs[328].formations[0] = 394
+            self.packs[328].formations[1] = 394
+
+            # Number 128 -> L.30 Magic, L.20 Magic, L.10 Magic
+            self.packs[329].formations[0] = 172
+            self.packs[329].formations[1] = 172
+
+            # Umaro -> Covert, Ogor
+            self.packs[373].formations[0] = 347
+            self.packs[373].formations[1] = 347
+
+            # FlameEater -> Pug
+            self.packs[335].formations[0] = 253
+            self.packs[335].formations[1] = 253
+
+            # Nerapa -> Master Pug
+            self.packs[337].formations[0] = 483
+            self.packs[337].formations[1] = 483
+
+            # Ultros 1 -> Intangir
+            self.packs[359].formations[0] = 210
+            self.packs[359].formations[1] = 210
+
+            # Ultros 2 -> Covert x2, Tap Dancer
+            self.packs[360].formations[0] = 350
+            self.packs[360].formations[1] = 350
+
+            # Ultros/Chupon -> KatanaSoul
+            self.packs[363].formations[0] = 465
+            self.packs[363].formations[1] = 465
+
+            # Kefka (Narshe) -> L.70 Magic x2, L.50 Magic
+            self.packs[313].formations[0] = 466
+            self.packs[313].formations[1] = 466
+
+            # Guardian (Vector) -> Siegfried (479) CzarDragon (561)
+            self.packs[331].formations[0] = 561
+            self.packs[331].formations[1] = 561
+
+
         if not self.args.random_encounters_original:
             # if shuffled/randomized encounters, need to remove extra formations from floating continent
             # otherwise, it is possible to get a formation on the floating continent where one of the next 3 formations is invalid
             # TODO try and fix this by shuffling/randomizing formations themselves instead of the foramtions in packs
             #      or possibly try to do both for fewer duplicates in packs (and skip shuffling/randomizing the fc pack 112)
             self.remove_extra_formations()
+        
 
         # after modification, generate names
         self._update_names()

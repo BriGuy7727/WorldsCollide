@@ -262,6 +262,23 @@ class EnemyScripts():
         chupon_id = 64
         chupon_script = self.scripts[chupon_id]
         chupon_script.insert(0, ai_instr.SetTarget(0x43)) # Target: Allies
+    
+    def czardragon_script(self):
+        from data.spell_names import name_id
+        # Make CzarDragon script = Doom Drgn script (0xf9e4f)?
+        czardragon_script = self.get_script("CzarDragon")
+        # czardragon_script.append(ai_instr.EndScript())
+        # Create new script
+        new_cd_script = [
+            # Use random spell attack (Fire, Ice, Bolt)
+            ai_instr.RandomAttack(name_id["S. Cross"], name_id["Ice 3"], name_id["Bolt 3"]),
+            # Use random spell attack (Wind, Pearl, Water)
+            ai_instr.RandomAttack(name_id["Aero"], name_id["Pearl"], name_id["El Nino"]),
+            # Use random spell attack (Poison, Earth, Non-elemental)
+            ai_instr.RandomAttack(name_id["Bio"], name_id["Quake"], name_id["Meteor"]),
+        ]
+        # append new one
+        czardragon_script.replace(czardragon_script, new_cd_script, 4)
 
     def mod(self):
         # first free up some space for other mods
@@ -274,6 +291,8 @@ class EnemyScripts():
 
         self.mag_roader_wild_cat_fix()
         self.rizopas_timer_mod()
+
+        # self.czardragon_script()
 
         if self.args.boss_experience:
             self.ifrit_shiva_death_mod()

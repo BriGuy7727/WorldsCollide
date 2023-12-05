@@ -1,4 +1,5 @@
 from data.bosses import name_enemy
+from data.bosses import alt_enemy_name
 
 custom_exp = {
     name_enemy["Marshal"]               : 80,
@@ -74,3 +75,19 @@ custom_exp = {
     name_enemy["Red Dragon"]            : 200,
     name_enemy["White Drgn"]            : 200,
 }
+'''
+alt_exp = {
+    alt_enemy_name["KatanaSoul"]        : 140,
+    alt_enemy_name["L.90 Magic"]        : 75,
+    alt_enemy_name["L.70 Magic"]        : 50,
+    alt_enemy_name["L.60 Magic"]        : 75,
+    alt_enemy_name["L.50 Magic"]        : 50,
+    alt_enemy_name["L.80 Magic"]        : 75,
+    alt_enemy_name["L.30 Magic"]        : 50,
+    alt_enemy_name["L.20 Magic"]        : 50,
+    alt_enemy_name["L.10 Magic"]        : 50,
+    alt_enemy_name["Master Pug"]        : 110,
+    alt_enemy_name["Intangir"]          : 200,
+    alt_enemy_name["CzarDragon"]        : 200,
+}
+'''

@@ -35,6 +35,9 @@ def parse(parser):
                         help = "Undead status removed from bosses")
     bosses.add_argument("-bmkl", "--boss-marshal-keep-lobos", action = "store_true",
                         help = "Don't replace the Marshal's Lobos with randomized enemies")
+    # Boss Battles -> Replace Easy Bosses with Hard Mobs
+    bosses.add_argument("-bbe", "--boss-battles-enemies", action = "store_true",
+                        help = "Replace some easy bosses with difficult enemy mobs")
 
 def process(args):
     if args.mix_bosses_dragons:
@@ -73,6 +76,11 @@ def flags(args):
         flags += " -bnu"
     if args.boss_marshal_keep_lobos:
         flags += " -bmkl"
+    # if Boss Battles: Hard Enemies is selected
+    #if args.boss_battles_enemies:
+        # If boss battles are Shuffle or Random, they're not Original, so make substitutes for hard mobs
+        #if args.boss_battles_shuffle or args.boss_battles_random:            
+            #flags += " -bbe"
 
     return flags
 
@@ -100,6 +108,7 @@ def options(args):
         ("Boss Experience", args.boss_experience, "boss_experience"),
         ("No Undead", args.boss_no_undead, "boss_no_undead"),
         ("Marshal Keep Lobos", args.boss_marshal_keep_lobos, "boss_marshal_keep_lobos"),
+        ("Bosses Replaced By Hard Mobs", args.boss_battles_enemies, "boss_battles_enemies"),
     ]
 
 def menu(args):
