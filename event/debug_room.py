@@ -97,9 +97,9 @@ class DebugRoom(Event):
         space = Write(Bank.CC, src, "Fight {boss}")
         fight_{boss} = space.start_address
         '''
+        # Fight MagiMaster
         src = []
         battle_bg = random.randint(0,55)
-        battle_bg = 44
         if battle_bg > 48 or battle_bg == 37:
             battle_bg = random.randint(54,55)
         # battles where party is all on right side, force a FRONT fight
@@ -107,6 +107,7 @@ class DebugRoom(Event):
             src += [
                 field.InvokeBattleType(name_pack["MagiMaster"], BattleType.FRONT, battle_bg),
             ]
+        # otherwise doesn't matter
         else:
             src += [
                 # invoke random boss pack, with random background
@@ -120,12 +121,23 @@ class DebugRoom(Event):
         space = Write(Bank.CC, src, "Fight MagiMaster")
         fight_MagiMaster = space.start_address
 
+        # Fight Doom
+        src = []
         battle_bg = random.randint(0,55)
-        if battle_bg > 48:
+        if battle_bg > 48 or battle_bg == 37:
             battle_bg = random.randint(54,55)
-        src = [
-            # invoke random boss pack, with random background
-            field.InvokeBattle(name_pack["Doom"], battle_bg),
+        # battles where party is all on right side, force a FRONT fight
+        elif battle_bg == 13 or battle_bg == 41 or battle_bg == 44 or battle_bg == 49:
+            src += [
+                field.InvokeBattleType(name_pack["Doom"], BattleType.FRONT, battle_bg),
+            ]
+        # otherwise doesn't matter
+        else:
+            src += [
+                # invoke random boss pack, with random background
+                field.InvokeBattle(name_pack["Doom"], battle_bg),
+            ]
+        src += [
             field.FadeInScreen(),
             field.WaitForFade(),
             field.Return(),
@@ -133,12 +145,23 @@ class DebugRoom(Event):
         space = Write(Bank.CC, src, "Fight Doom")
         fight_Doom = space.start_address
 
+        # Fight Goddess
+        src = []
         battle_bg = random.randint(0,55)
-        if battle_bg > 48:
+        if battle_bg > 48 or battle_bg == 37:
             battle_bg = random.randint(54,55)
-        src = [
-            # invoke random boss pack, with random background
-            field.InvokeBattle(name_pack["Goddess"], battle_bg),
+        # battles where party is all on right side, force a FRONT fight
+        elif battle_bg == 13 or battle_bg == 41 or battle_bg == 44 or battle_bg == 49:
+            src += [
+                field.InvokeBattleType(name_pack["Goddess"], BattleType.FRONT, battle_bg),
+            ]
+        # otherwise doesn't matter
+        else:
+            src += [
+                # invoke random boss pack, with random background
+                field.InvokeBattle(name_pack["Goddess"], battle_bg),
+            ]
+        src += [
             field.FadeInScreen(),
             field.WaitForFade(),
             field.Return(),
@@ -146,17 +169,27 @@ class DebugRoom(Event):
         space = Write(Bank.CC, src, "Fight Goddess")
         fight_Goddess = space.start_address
 
+        # Fight Poltrgeist
+        src = []
         battle_bg = random.randint(0,55)
-        if battle_bg > 48:
+        if battle_bg > 48 or battle_bg == 37:
             battle_bg = random.randint(54,55)
-        src = [
-            # invoke random boss pack, with random background
-            field.InvokeBattle(name_pack["Poltrgeist"], battle_bg),
+        # battles where party is all on right side, force a FRONT fight
+        elif battle_bg == 13 or battle_bg == 41 or battle_bg == 44 or battle_bg == 49:
+            src += [
+                field.InvokeBattleType(name_pack["Poltrgeist"], BattleType.FRONT, battle_bg),
+            ]
+        # otherwise doesn't matter
+        else:
+            src += [
+                # invoke random boss pack, with random background
+                field.InvokeBattle(name_pack["Poltrgeist"], battle_bg),
+            ]
+        src += [
             field.FadeInScreen(),
             field.WaitForFade(),
             field.Return(),
         ]
-
         space = Write(Bank.CC, src, "Fight Poltrgeist")
         fight_Poltrgeist = space.start_address
 

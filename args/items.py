@@ -61,6 +61,11 @@ def process(args):
     from constants.items import good_items, stronger_items, premium_items
     from constants.items import id_name, name_id
 
+    # if we're doing Kefka Practice, everyone can equip anything
+    if args.kprac:
+        args.item_equipable_original_random = 100
+        args.item_equipable_relic_original_random = 100
+
     args._process_min_max("item_equipable_random")
     if args.item_equipable_balanced_random is not None:
         args.item_equipable_balanced_random_value = args.item_equipable_balanced_random
