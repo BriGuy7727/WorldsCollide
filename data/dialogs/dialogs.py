@@ -542,7 +542,7 @@ class Dialogs():
             self.set_text(2915, "This is Figaro Castle.<end>")
             self.set_text(2920, "If Edgar leads your party, all the shops in Figaro Castle are 1/2 off.<end>")
             self.set_text(2921, "This discount works in South Figaro World of Ruin too!<end>")
-            self.set_text(2986, "Kefka Practice.<line>Talk to Gehstahl to recruit characters beyond your starting party.<line>Talk to Airship Guy to add/remove party members and equip before final battle.<line>Interact with Airship Controls to go to Final Kefka.<end>")
+            self.set_text(2986, "Kefka Practice.<line>Talk to Leo to recruit characters beyond your starting party.<line>Talk to Airship Guy to add/remove party members and equip before final battle.<line>Interact with Airship Controls to go to Final Kefka.<end>")
 
             # conditional flags for character gating
             if args.character_gating:
