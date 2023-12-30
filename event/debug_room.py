@@ -65,7 +65,7 @@ class DebugRoom(Event):
         teleport_npc.x = source_x
         teleport_npc.y = source_y
         teleport_npc.sprite = 16
-        teleport_npc.palette = 3
+        teleport_npc.palette = 0
         teleport_npc.direction = direction
         teleport_npc.set_event_address(space.start_address)
         self.maps.append_npc(source_map, teleport_npc)
@@ -245,7 +245,7 @@ class DebugRoom(Event):
         test_npc.x = 16
         test_npc.y = 4
         test_npc.sprite = 22
-        test_npc.palette = 0
+        test_npc.palette = 3
         test_npc.direction = direction.DOWN
         test_npc.speed = 0
         test_npc.set_event_address(boss_choice)
