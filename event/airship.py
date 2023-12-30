@@ -22,18 +22,36 @@ class Airship(Event):
         self.fix_fly_offscreen_bug()
 
     def controls_mod(self):
-        fly_wor_fc_cancel_dialog = 1315
+        if self.args.kprac:
+            fly_kefka_dialog = 1315
+        else:
+            fly_wor_fc_cancel_dialog = 1315
         fly_wor_cancel_dialog = 1318
         fly_wob_dg_cancel_dialog = 1293
         fly_wob_cancel_dialog = 1319
 
-        self.dialogs.set_text(fly_wor_fc_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Ruin)<line><choice> (Floating Continent)<line><choice> (Not just yet)<end>')
+        if self.args.kprac:
+            self.dialogs.set_text(fly_kefka_dialog, '<choice> (Kefka Battle)<line><choice> (Not just yet)<end>')
+        else:
+            self.dialogs.set_text(fly_wor_fc_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Ruin)<line><choice> (Floating Continent)<line><choice> (Not just yet)<end>')
         self.dialogs.set_text(fly_wor_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Ruin)<line><choice> (Not just yet)<end>')
         self.dialogs.set_text(fly_wob_dg_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Balance)<line><choice> (Search The Skies)<line><choice> (Not just yet)<end>')
         self.dialogs.set_text(fly_wob_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Balance)<line><choice> (Not just yet)<end>')
 
         lift_off = 0xaf58d
         enter_floating_continent = 0xa581a
+        if self.args.kprac:
+            space = Allocate(Bank.CA, 16, "Final Kefka Practice Skip", field.NOP())
+            enter_kefka = space.start_address
+            space.write(
+                # Use the party select screen to put in recruited characters
+                field.Call(field.REMOVE_ALL_CHARACTERS_FROM_ALL_PARTIES),
+                field.Call(field.REFRESH_CHARACTERS_AND_SELECT_THREE_PARTIES),
+                # Final Kefka Character Select Screen
+                0x9d,
+                # Initiate Final Battle
+                0x4d, 0x65, 0x33,
+            )
 
         space = Allocate(Bank.CA, 298, "airship controls dialog/choices", field.NOP())
 
@@ -41,14 +59,23 @@ class Airship(Event):
         self.enter_wob_mod(space)
         self.doom_gaze_mod(space)
 
-        fly_wor_fc_cancel_choice = space.next_address
-        space.write(
-            field.DialogBranch(fly_wor_fc_cancel_dialog,
-                               dest1 = lift_off,
-                               dest2 = self.enter_wor,
-                               dest3 = enter_floating_continent,
-                               dest4 = field.RETURN),
-        )
+        # Final Kefka practice airship options
+        if self.args.kprac:
+            fly_kefka_choice = space.next_address
+            space.write(
+                field.DialogBranch(fly_kefka_dialog,
+                                dest1 = enter_kefka,
+                                dest2 = field.RETURN),
+            )
+        else:
+            fly_wor_fc_cancel_choice = space.next_address
+            space.write(
+                field.DialogBranch(fly_wor_fc_cancel_dialog,
+                                dest1 = lift_off,
+                                dest2 = self.enter_wor,
+                                dest3 = enter_floating_continent,
+                                dest4 = field.RETURN),
+            )
 
         fly_wor_cancel_choice = space.next_address
         space.write(
@@ -98,9 +125,15 @@ class Airship(Event):
                 field.BranchIfEventBitClear(event_bit.character_recruited(self.events["Floating Continent"].character_gate()),
                                             fly_wor_cancel_choice),
             )
-        space.write(
-            field.Branch(fly_wor_fc_cancel_choice),
-        )
+        # Final Kefka practice dialog option
+        if self.args.kprac:
+            space.write(
+                field.Branch(fly_kefka_choice),
+            )
+        else:
+            space.write(
+                field.Branch(fly_wor_fc_cancel_choice),
+            )
 
     def enter_wor_mod(self, space):
         self.enter_wor = space.next_address

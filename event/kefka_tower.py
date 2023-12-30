@@ -19,9 +19,18 @@ class KefkaTower(Event):
             space.write(
                 field.SetEventBit(event_bit.UNLOCKED_FINAL_KEFKA),
             )
+        # If we're doing Final Kefka Practice, unlock Final Kefka (going straight to Kefka switches)
+        if self.args.kprac:
+            space.write(
+                field.SetEventBit(event_bit.UNLOCKED_FINAL_KEFKA),
+            )
 
     def mod(self):
-        self.statue_landing_mod()
+        # if we're doing practice, do Kefka landing mod
+        if self.args.kprac:
+            self.kefka_landing_mod()
+        else:
+            self.statue_landing_mod()
         self.entrance_landing_mod()
         self.kefka_scene_mod()
 
@@ -145,6 +154,124 @@ class KefkaTower(Event):
 
         space = Reserve(0xa03ad, 0xa03af, "kefka tower the statues are up ahead", field.NOP())
 
+    def kefka_landing_mod(self):
+        src = [
+            Read(0xa02d6, 0xa030a),
+            # make sure we set up our event bits similar to the statue skip
+            field.ClearEventBit(event_bit.UNLOCKED_KT_SKIP),
+
+            field.SetEventBit(event_bit.LEFT_WEIGHT_PUSHED_KEFKA_TOWER),
+            field.SetEventBit(event_bit.RIGHT_WEIGHT_PUSHED_KEFKA_TOWER),
+            field.ClearEventBit(npc_bit.LEFT_UNPUSHED_WEIGHT_KEFKA_TOWER),
+            field.SetEventBit(npc_bit.LEFT_PUSHED_WEIGHT_KEFKA_TOWER),
+            field.ClearEventBit(npc_bit.RIGHT_UNPUSHED_WEIGHT_KEFKA_TOWER),
+            field.SetEventBit(npc_bit.RIGHT_PUSHED_WEIGHT_KEFKA_TOWER),
+            field.ClearEventBit(npc_bit.CENTER_DOOR_BLOCK_KEFKA_TOWER),
+
+            field.SetEventBit(event_bit.WEST_PATH_BLOCKED_KEFKA_TOWER),
+            field.SetEventBit(event_bit.EAST_PATH_BLOCKED_KEFKA_TOWER),
+            field.SetEventBit(event_bit.NORTH_PATH_OPEN_KEFKA_TOWER),
+            field.SetEventBit(event_bit.SOUTH_PATH_OPEN_KEFKA_TOWER),
+            field.SetEventBit(event_bit.CENTER_DOOR_KEFKA_TOWER),
+            field.SetEventBit(event_bit.LEFT_RIGHT_DOORS_KEFKA_TOWER),
+
+            # load map 411 (Kefka Switches), middle party is at (190,40)
+            field.LoadMap(0x19b, direction.DOWN, default_music = False,
+                          x = 109, y = 40, fade_in = False, entrance_event = True),
+
+            field.ClearEventBit(event_bit.TEMP_SONG_OVERRIDE),
+            field.HoldScreen(),
+            field.HideEntity(field_entity.PARTY0),
+            # make sure we load map 411 (x19b)
+            field.SetPartyMap(2, 0x19b),
+            field.SetPartyMap(3, 0x19b),
+            Read(0xa031e, 0xa0320),
+            # set middle party x position to 109
+            field.EntityAct(field_entity.PARTY0, True,
+                field_entity.SetPosition(109, 0),
+            ),
+            Read(0xa0327, 0xa032d),
+            # set right party x position to 115
+            field.EntityAct(field_entity.PARTY0, True,
+                field_entity.SetPosition(115, 0),
+            ),
+            Read(0xa0334, 0xa033c),
+            # set right party x position to 103
+            field.EntityAct(field_entity.PARTY0, True,
+                field_entity.SetPosition(103, 0),
+                field_entity.AnimateFrontHandsUp(),
+                field_entity.SetSpeed(field_entity.Speed.FAST),
+            ),
+            field.FadeInScreen(),
+            field.EntityAct(field_entity.PARTY0, True,
+                field_entity.DisableWalkingAnimation(),
+                field_entity.AnimateSurprised(),
+                # left party, move down 43, so that's 8 * 5 + 3
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 3),
+                field_entity.AnimateKneeling(),
+                field_entity.EnableWalkingAnimation(),
+            ),
+
+            field.SetParty(2),
+            field.RefreshEntities(),
+            field.UpdatePartyLeader(),
+            field.Pause(1),
+            field.EntityAct(field_entity.PARTY0, True,
+                field_entity.SetSpriteLayer(2),
+                field_entity.DisableWalkingAnimation(),
+                field_entity.SetSpeed(field_entity.Speed.FASTEST),
+                field_entity.AnimateSurprised(),
+                # middle party, move down 40, so that's 8 * 5
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.AnimateKneeling(),
+                field_entity.EnableWalkingAnimation(),
+                field_entity.SetSpriteLayer(0),
+            ),
+
+            field.SetParty(3),
+            field.RefreshEntities(),
+            field.UpdatePartyLeader(),
+            field.FadeOutSong(130),
+            field.Pause(0.75),
+            field.EntityAct(field_entity.PARTY0, True,
+                # right party, move down 42, so that's 8 * 5 + 2
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 8),
+                field_entity.Move(direction.DOWN, 2),
+                field_entity.AnimateKneeling(),
+            ),
+
+            # set Kefka switches event bit to trigger battle immediately
+            field.SetEventBit(event_bit.multipurpose_party1_step(2)),
+            field.SetEventBit(event_bit.multipurpose_party2_step(2)),
+            field.SetEventBit(event_bit.multipurpose_party3_step(2)),
+
+            field.Pause(0.75),
+
+            Read(0xa039c, 0xa039f),
+            # make sure we load the left party (103,43)
+            field.LoadMap(0x19b, direction.DOWN, default_music = True,
+                          x = 103, y = 43, fade_in = True, entrance_event = True),
+            field.FreeScreen(),
+            Read(0xa03b0, 0xa03b9),
+        ]
+        space = Write(Bank.CA, src, "kefka tower final switches landing")
+        self.kekfa_landing = space.start_address
+
+        space = Reserve(0xa03ad, 0xa03af, "kefka tower the statues are up ahead", field.NOP())
+
     def entrance_landing_mod(self):
         need_more_allies = 2982
         self.dialogs.set_text(need_more_allies, "We need to find more allies.<end>")
@@ -154,31 +281,45 @@ class KefkaTower(Event):
                               "<choice> (Statues)<line><choice> (Entrance)<line><choice> (Not just yet)<end>")
 
         space = Reserve(0xa01a2, 0xa02d5, "kefka tower first landing scene", field.NOP())
-        space.add_label("STATUE_LANDING", self.statue_landing)
+        # add Kefka switches landing
+        if self.args.kprac:
+            space.add_label("KEFKA_LANDING", self.kekfa_landing)
+        else:
+            space.add_label("STATUE_LANDING", self.statue_landing)
         space.add_label("ENTRANCE_LANDING", space.end_address + 1)
-        space.write(
-            field.BranchIfEventWordLess(event_word.CHARACTERS_AVAILABLE, 3, "NEED_MORE_ALLIES"),
-            field.BranchIfEventBitSet(event_bit.UNLOCKED_KT_SKIP, "LANDING_MENU"),
+        # only write out Kefka Landing if kefka practice
+        if self.args.kprac:
+            space.write(
+                field.Pause(2), # NOTE: load-bearing pause, without a pause or dialog before party select the game
+                                #       enters an infinite loop. it seems like the game needs time to finish
+                               #       fading in after the vehicle map load at 0xca0081
+                field.Branch("KEFKA_LANDING"),
+            )
+        # else do "normal" entrance & statues landings
+        else:
+            space.write(
+                field.BranchIfEventWordLess(event_word.CHARACTERS_AVAILABLE, 3, "NEED_MORE_ALLIES"),
+                field.BranchIfEventBitSet(event_bit.UNLOCKED_KT_SKIP, "LANDING_MENU"),
 
-            field.Pause(2), # NOTE: load-bearing pause, without a pause or dialog before party select the game
-                            #       enters an infinite loop. it seems like the game needs time to finish
-                            #       fading in after the vehicle map load at 0xca0081
+                field.Pause(2), # NOTE: load-bearing pause, without a pause or dialog before party select the game
+                                #       enters an infinite loop. it seems like the game needs time to finish
+                                #       fading in after the vehicle map load at 0xca0081
+ 
+                field.Branch("ENTRANCE_LANDING"),
 
-            field.Branch("ENTRANCE_LANDING"),
+                "NEED_MORE_ALLIES",
+                field.Dialog(need_more_allies),
 
-            "NEED_MORE_ALLIES",
-            field.Dialog(need_more_allies),
+                "CANCEL_LANDING",
+                field.LoadMap(0x01, direction.DOWN, default_music = False,
+                            x = 137, y = 197, fade_in = True, airship = True),
+                vehicle.End(),
+                field.Return(),
 
-            "CANCEL_LANDING",
-            field.LoadMap(0x01, direction.DOWN, default_music = False,
-                          x = 137, y = 197, fade_in = True, airship = True),
-            vehicle.End(),
-            field.Return(),
-
-            "LANDING_MENU",
-            field.DialogBranch(statues_entrance,
-                               dest1 = "STATUE_LANDING", dest2 = "ENTRANCE_LANDING", dest3 = "CANCEL_LANDING"),
-        )
+                "LANDING_MENU",
+                field.DialogBranch(statues_entrance,
+                                dest1 = "STATUE_LANDING", dest2 = "ENTRANCE_LANDING", dest3 = "CANCEL_LANDING"),
+            )
 
     def kefka_scene_mod(self):
         space = Reserve(0xc17ff, 0xc1801, "kefka tower defeat the statues, and magical power will not disappear", field.NOP())

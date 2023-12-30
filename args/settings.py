@@ -19,6 +19,11 @@ def process(args):
 def flags(args):
     flags = ""
 
+    # if we're doing Kefka practice, use Open World to avoid any logic hiccups when generating a seed
+    if args.kprac:
+        args.character_gating = False
+        args.open_world = True
+        
     if args.character_gating:
         flags += " -cg"
     elif args.open_world:

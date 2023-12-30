@@ -401,7 +401,8 @@ class Enemies():
         if self.args.scan_all:
             self.scan_all()
 
-        if self.args.debug:
+        # only turn on enemy debug mod if not using Kefka Practice
+        if self.args.debug and not self.args.kprac:
             for enemy in self.enemies:
                 enemy.debug_mod()
 

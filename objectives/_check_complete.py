@@ -23,7 +23,14 @@ class Field(_CachedFunction, field.Call):
             objective.result.field(),
 
             field.SetEventBit(objective_event_bit),
-            field.Dialog(dialogs.OBJECTIVES[objective.id]),
+        ]
+        import args
+        # if not Kefka Practice, use objective dialog, otherwise no need
+        if not args.kprac:
+            src += [
+                field.Dialog(dialogs.OBJECTIVES[objective.id]),
+            ]
+        src += [
             field.Return(),
         ]
         return Write(Bank.CA, src, f"field check complete objective {objective.id}")

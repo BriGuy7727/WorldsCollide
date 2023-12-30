@@ -147,6 +147,10 @@ class Start(Event):
     def start_esper_mod(self):
         src = []
 
+        # give all of the espers if doing Final Kefka practice
+        if self.args.kprac:
+            self.espers.starting_espers = self.espers.esper_menu_order
+
         for esper_id in self.espers.starting_espers:
             src += [
                 field.AddEsper(esper_id, sound_effect = False)
@@ -225,6 +229,33 @@ class Start(Event):
                 field.AddItem(id_name[junk_id], sound_effect = False)
             ]
 
+        # If doing Kefka Practice mod, give 6 of each item to start
+        from objectives.results.throwables import THROWABLES
+        from objectives.results.restoratives import RESTORATIVES
+        if self.args.kprac:
+            i = 1
+            while i <= 6:
+                for item_id in id_name:
+                    # Do not give any "Junk" AKA Tier 0 items (if a low-equipment run, can use default stuff)
+                    # Do not give Throwables or Restoratives (can use an objective instead)
+                    # Do not give PaladinShld or CursedShld
+                    # Do not give > 1 tool
+                    # Do not give any relics other than:
+                    # RunningShoes, Cherub Down, DragoonBoots, Earrings, Atlas Armlet, Blizzard Orb, Rage Ring
+                    # Hero Ring, Ribbon, Muscle Belt, Crystal Orb, Gold Hairpin, Economizer, Gauntlet, GenjiGlove,
+                    # Hyper Wrist, Offering, Beads, Gem Box, Dragon Horn, Merit Award, Memento Ring, Safety Bit
+                    # Marvel Shoes, Sniper Sight, Wall Ring, True Knight
+                    ignore_relics = ["Goggles", "Star Pendant", "Amulet", "White Cape", "Jewel Ring", "Fairy Ring", "Barrier Ring"
+                                    "MithrilGlove", "Guard Ring", "Cure Ring", "Zephyr Cape", "Czarina Ring", "Cursed Ring", 
+                                    "Sneak Ring", "Pod Bracelet", "Thief Glove", "Black Belt", "Coin Toss", "FakeMustache", "Relic Ring", 
+                                    "Moogle Charm", "Charm Bangle", "Back Guard", "Gale Hairpin", "Exp. Egg", "Tintinabar", "Sprint Shoes",
+                                    "Rename Card"]
+                    if id_name[item_id] not in junk and id_name[item_id] not in THROWABLES and id_name[item_id] not in RESTORATIVES and id_name[item_id] != "Paladin Shld" and id_name[item_id] != "Cursed Shld" and id_name[item_id] not in tools and id_name[item_id] not in ignore_relics:
+                        src += [
+                            field.AddItem(id_name[item_id], sound_effect = False)
+                        ]
+                i += 1
+
         if self.args.debug:
             src += [
                 field.AddItem("Dried Meat", sound_effect = False),
@@ -256,6 +287,12 @@ class Start(Event):
             field.RefreshEntities(),
             field.FreeScreen(),
             field.FadeInScreen(speed = 4),
+        ]
+        if self.args.kprac:
+            src += [
+                field.Dialog(2986),
+            ]
+        src += [
             field.Return(),
         ]
         space = Write(Bank.CC, src, "start game")
