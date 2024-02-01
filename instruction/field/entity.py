@@ -52,6 +52,12 @@ class CenterScreen(_Instruction):
     def __init__(self):
         super().__init__(0xd7)
 
+# used for static NPCs since "StandingFront" is an incomplete sprite;
+# used for NPCs 63-86 in ff6tools (Ramuh-Atma)
+class AnimateStaticNPC(_Instruction):
+    def __init__(self):
+        super().__init__(0x00)
+
 class AnimateStandingFront(_Instruction):
     def __init__(self):
         super().__init__(0x01)

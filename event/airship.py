@@ -41,6 +41,7 @@ class Airship(Event):
         lift_off = 0xaf58d
         enter_floating_continent = 0xa581a
         if self.args.kprac:
+            import data.bosses
             space = Allocate(Bank.CA, 16, "Final Kefka Practice Skip", field.NOP())
             enter_kefka = space.start_address
             space.write(
@@ -48,9 +49,9 @@ class Airship(Event):
                 field.Call(field.REMOVE_ALL_CHARACTERS_FROM_ALL_PARTIES),
                 field.Call(field.REFRESH_CHARACTERS_AND_SELECT_THREE_PARTIES),
                 # Final Kefka Character Select Screen
-                0x9d,
-                # Initiate Final Battle
-                0x4d, 0x65, 0x33,
+                field.InvokeFinalLineup(),
+                # Initiate Final Battle 
+                field.InvokeBattle(data.bosses.name_pack["Final Battle"],51)
             )
 
         space = Allocate(Bank.CA, 298, "airship controls dialog/choices", field.NOP())
