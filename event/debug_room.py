@@ -29,6 +29,8 @@ class DebugRoom(Event):
             STRAGO_HOUSE_MAP = 0x15d
             while(self.maps.get_npc_count(0xd9) > 0):
                 self.maps.remove_npc(0xd9, 0)
+            while(self.maps.get_npc_count(0x37) > 0):
+                self.maps.remove_npc(0x37, 0)
             #MAP_MAX = 413
             #for map in range(BLACKJACK_INTERIOR_MAP+1,MAP_MAX):
             #    if map != STRAGO_HOUSE_MAP:
@@ -73,8 +75,7 @@ class DebugRoom(Event):
     
     def add_boss_npcs_mod(self):
         # Add an NPC to fight each boss cluster
-        from data.bosses import name_pack
-        from data.bosses import normal_pack_name
+        from data.bosses import name_pack, normal_pack_name, dragon_pack_name
         from instruction.field.instructions import BattleType
         import random
         boss_packs = list(normal_pack_name)     # gives a list of all keys (formation #s)
@@ -111,6 +112,39 @@ class DebugRoom(Event):
             ]
             space = Write(Bank.CC, src, "Fight {boss}")
             fight_bosses.update({boss:space.start_address})
+        
+        # do the same for dragons
+        fight_dragons = {}
+        for dragon in dragon_pack_name:
+            src = []
+            # pick random background
+            battle_bg = random.randint(0,55)
+            # if 37 -> WOB Airship (party all in center) OR a background that doesn't look right (Kefka Climb or Phantom Train boss)
+            if battle_bg > 48 or battle_bg == 37:
+                # pick between Final Kefka & Tentacles
+                battle_bg = random.randint(54,55)
+            # battles where party is all on right side, force a FRONT fight 
+            # 13 -> Lete River (party all on right)
+            # 41 -> WOR Airship (party all right)
+            # 44 -> Magitek Car (party all right)
+            # 49 -> WOB Airship (party all right)
+            if battle_bg == 13 or battle_bg == 41 or battle_bg == 44 or battle_bg == 49:
+                src += [
+                    field.InvokeBattleType(dragon, BattleType.FRONT, battle_bg),
+               ]
+            # otherwise doesn't matter
+            else:
+                src += [
+                    # invoke random boss pack, with random background
+                    field.InvokeBattle(dragon, battle_bg),
+                ]
+            src += [
+                field.FadeInScreen(),
+                field.WaitForFade(),
+                field.Return(),
+            ]
+            space = Write(Bank.CC, src, "Fight {dragon}")
+            fight_dragons.update({dragon:space.start_address})
         
 
         # 2987-3018
@@ -394,9 +428,9 @@ class DebugRoom(Event):
                             dest4 = field.RETURN),
         )
         boss_choice13 = space.start_address
-        # Kefka                   Doom, Poltrgeist, Goddess
+        # Statues               Doom, Poltrgeist, Goddess
         boss_npc = NPC()
-        boss_npc.x = 86
+        boss_npc.x = 73
         boss_npc.y = 19
         boss_npc.direction = direction.UP
         boss_npc.sprite = 87
@@ -411,63 +445,63 @@ class DebugRoom(Event):
         space = Allocate(Bank.CA, 100, "Boss Selection", field.NOP())
         space.write(
             field.DialogBranch(boss_choice_dialog14,
-                            dest1 = fight_bosses.get(name_pack["Red Dragon"]),
-                            dest2 = fight_bosses.get(name_pack["Ice Dragon"]),
-                            dest3 = fight_bosses.get(name_pack["Gold Drgn"]),
+                            dest1 = fight_dragons.get(name_pack["Red Dragon"]),
+                            dest2 = fight_dragons.get(name_pack["Ice Dragon"]),
+                            dest3 = fight_dragons.get(name_pack["Gold Drgn"]),
                             dest4 = field.RETURN),
         )
         boss_choice14 = space.start_address
         # Dragon 1                Red Dragon, Ice Dragon, Gold Drgn
         boss_npc = NPC()
-        boss_npc.x = 31
-        boss_npc.y = 11
+        boss_npc.x = 86
+        boss_npc.y = 19
         boss_npc.direction = direction.DOWN
         boss_npc.sprite = 57
         boss_npc.palette = 1
         boss_npc.set_event_address(boss_choice14)
         self.maps.append_npc(self.DEBUG_ROOM2, boss_npc)
-        '''
+
         boss_choice_dialog15 = 2898
         self.dialogs.set_text(boss_choice_dialog15, '<choice>White Drgn<line><choice>Blue Drgn<line><choice>(cancel)<end>')
         space = Allocate(Bank.CA, 100, "Boss Selection", field.NOP())
         space.write(
             field.DialogBranch(boss_choice_dialog15,
-                            dest1 = fight_bosses.get(name_pack["White Drgn"]),
-                            dest2 = fight_bosses.get(name_pack["Blue Drgn"]),
+                            dest1 = fight_dragons.get(name_pack["White Drgn"]),
+                            dest2 = fight_dragons.get(name_pack["Blue Drgn"]),
                             dest3 = field.RETURN),
         )
         boss_choice15 = space.start_address
         # Dragon 2                White Drgn, Blue Drgn
         boss_npc = NPC()
-        boss_npc.x = 32
-        boss_npc.y = 17
+        boss_npc.x = 87
+        boss_npc.y = 19
         boss_npc.direction = direction.DOWN
         boss_npc.sprite = 57
-        boss_npc.palette = 4
+        boss_npc.palette = 3
         boss_npc.set_event_address(boss_choice15)
         self.maps.append_npc(self.DEBUG_ROOM2, boss_npc)
 
         boss_choice_dialog16 = 2899
         self.dialogs.set_text(boss_choice_dialog16, '<choice>Storm Drgn<line><choice>Dirt Drgn<line><choice>Skull Drgn<line><choice>(cancel)<end>')
-        space = Allocate(Bank.CA, 500, "Boss Selection", field.NOP())
+        space = Allocate(Bank.CA, 100, "Boss Selection", field.NOP())
         space.write(
             field.DialogBranch(boss_choice_dialog16,
-                            dest1 = fight_bosses.get(name_pack["Storm Drgn"]),
-                            dest2 = fight_bosses.get(name_pack["Dirt Drgn"]),
-                            dest3 = fight_bosses.get(name_pack["Skull Drgn"]),
+                            dest1 = fight_dragons.get(name_pack["Storm Drgn"]),
+                            dest2 = fight_dragons.get(name_pack["Dirt Drgn"]),
+                            dest3 = fight_dragons.get(name_pack["Skull Drgn"]),
                             dest4 = field.RETURN),
         )
         boss_choice16 = space.start_address
         # Storm Drgn, Dirt Drgn, Skull Drgn
         boss_npc = NPC()
-        boss_npc.x = 33
-        boss_npc.y = 17
+        boss_npc.x = 88
+        boss_npc.y = 19
         boss_npc.direction = direction.DOWN
         boss_npc.sprite = 57
         boss_npc.palette = 0
         boss_npc.set_event_address(boss_choice16)
         self.maps.append_npc(self.DEBUG_ROOM2, boss_npc)  
-        '''
+       
         # add an NPC to heal party
         heal_npc = NPC()
         heal_npc.x = 81
@@ -492,8 +526,25 @@ class DebugRoom(Event):
         party_npc.sprite = 60
         party_npc.palette = 2
         # use the Airship party change guy
-        # Need to figure out how to teleport back to this room instead of Airship...
-        party_npc.set_event_address(0xc3510)
+        space = Allocate(Bank.CA, 28, "Party Setup", field.NOP())
+        space.write(
+            field.Call(field.REMOVE_ALL_CHARACTERS_FROM_ALL_PARTIES),
+            field.Call(field.REFRESH_CHARACTERS_AND_SELECT_PARTY), 
+            field.FadeInScreen(),
+        )
+        change_party = space.start_address
+        change_party_unequip_dialog_id = 3000
+        self.dialogs.set_text(change_party_unequip_dialog_id, "<choice> Change party members.<line><choice> Unequip those not in party.<line><choice> Unequip all members.<line><choice> Don't do a thing!<end>")
+        space = Allocate(Bank.CA, 20, "Party Setup", field.NOP())
+        space.write(
+            field.DialogBranch(change_party_unequip_dialog_id,
+                            dest1 = change_party,   # change party
+                            dest2 = 0xc359d,        # use Airship option 
+                            dest3 = 0xc351e,        # use Airship option
+                            dest4 = field.RETURN),
+        )
+        change_party_unequip_dialog = space.start_address
+        party_npc.set_event_address(change_party_unequip_dialog)
         self.maps.append_npc(self.DEBUG_ROOM2, party_npc)
         
 
@@ -522,8 +573,8 @@ class DebugRoom(Event):
         self._add_teleport_npc(BLACKJACK_EXTERIOR_MAP, 15, 4, direction.DOWN, self.DEBUG_ROOM, 8, 9, 16, 0)
         self._add_teleport_npc(self.DEBUG_ROOM, 8, 10, direction.UP, BLACKJACK_EXTERIOR_MAP, 15, 5, 16, 0)
         # Gehstal for bosses
-        self._add_teleport_npc(BLACKJACK_EXTERIOR_MAP, 16, 4, direction.DOWN, self.DEBUG_ROOM2, 80, 23, 22, 3)
-        self._add_teleport_npc(self.DEBUG_ROOM2, 80, 24, direction.UP, BLACKJACK_EXTERIOR_MAP, 16, 5, 22, 3)
+        self._add_teleport_npc(BLACKJACK_EXTERIOR_MAP, 16, 4, direction.DOWN, self.DEBUG_ROOM2, 80, 24, 22, 3)
+        self._add_teleport_npc(self.DEBUG_ROOM2, 80, 25, direction.UP, BLACKJACK_EXTERIOR_MAP, 16, 5, 22, 3)
         #self._add_teleport_npc(BLACKJACK_EXTERIOR_MAP, 16, 4, direction.DOWN, self.DEBUG_ROOM2, 26, 29, 22, 3)
         #self._add_teleport_npc(self.DEBUG_ROOM2, 27, 29, direction.UP, BLACKJACK_EXTERIOR_MAP, 16, 5, 22, 3)
         #self._add_teleport_npc(BLACKJACK_EXTERIOR_MAP, 16, 4, direction.DOWN, self.DEBUG_ROOM2, 28, 50, 22, 3)
