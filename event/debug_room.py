@@ -531,6 +531,8 @@ class DebugRoom(Event):
             field.Call(field.REMOVE_ALL_CHARACTERS_FROM_ALL_PARTIES),
             field.Call(field.REFRESH_CHARACTERS_AND_SELECT_PARTY), 
             field.FadeInScreen(),
+            field.WaitForFade(),
+            field.Return(),
         )
         change_party = space.start_address
         change_party_unequip_dialog_id = 3000
