@@ -124,6 +124,9 @@ class Zozo(Event):
         self.ramuh_npc.palette = 6
         self.ramuh_npc.split_sprite = 1
         self.ramuh_npc.direction = direction.DOWN
+        # clear unknown bits that cause a glitchy sprite if reward is a character (Archipelago)
+        self.ramuh_npc.unknown1 = 0
+        self.ramuh_npc.unknown2 = 0
 
         src = [
             field.AddItem(item),

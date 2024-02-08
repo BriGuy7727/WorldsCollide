@@ -310,6 +310,9 @@ class DomaWOR(Event):
         magicite_throne_room_npc.palette = 6
         magicite_throne_room_npc.split_sprite = 1
         magicite_throne_room_npc.direction = direction.DOWN
+        # clear unknown bits that cause a glitchy sprite if reward is a character (Archipelago)
+        magicite_throne_room_npc.unknown1 = 0
+        magicite_throne_room_npc.unknown2 = 0
 
         magicite_throne_room_npc_id = 0x18
         magicite_throne_room_npc = self.maps.get_npc(0x7b, magicite_throne_room_npc_id)
@@ -317,6 +320,9 @@ class DomaWOR(Event):
         magicite_throne_room_npc.palette = 6
         magicite_throne_room_npc.split_sprite = 1
         magicite_throne_room_npc.direction = direction.DOWN
+        # clear unknown bits that cause a glitchy sprite if reward is a character (Archipelago)
+        magicite_throne_room_npc.unknown1 = 0
+        magicite_throne_room_npc.unknown2 = 0
 
         self.throne_esper_item_mod([
             field.AddItem(item),

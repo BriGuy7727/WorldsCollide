@@ -207,6 +207,9 @@ class NarsheWOR(Event):
         magicite_npc.palette = 6
         magicite_npc.split_sprite = 1
         magicite_npc.direction = direction.DOWN
+        # clear unknown bits that cause a glitchy sprite if reward is a character (Archipelago)
+        magicite_npc.unknown1 = 0
+        magicite_npc.unknown2 = 0
 
         import data.text
         item_name = data.text.convert(self.items.get_name(item), data.text.TEXT1) # item names are stored as TEXT2, dialogs are TEXT1

@@ -62,6 +62,9 @@ class Tritoch(Event):
         magicite_npc.palette = 6
         magicite_npc.split_sprite = 1
         magicite_npc.direction = direction.DOWN
+        # clear unknown bits that cause a glitchy sprite if reward is a character (Archipelago)
+        magicite_npc.unknown1 = 0
+        magicite_npc.unknown2 = 0
 
         space = Reserve(0xc3779, 0xc377e, "tritoch esper sound effect and flash screen white", field.NOP())
         space.write(
