@@ -311,20 +311,13 @@ class DebugRoom(Event):
         boss_npc = NPC()
         boss_npc.x = 82
         boss_npc.y = 21
-        boss_npc.direction = direction.DOWN
-        #boss_npc.no_face_on_trigger = 1
         boss_npc.sprite = 83
         boss_npc.palette = 5
-        #boss_npc.unknown1 = 1
-        #boss_npc.unknown2 = 1
-        #boss_npc.const_sprite = 1
+        boss_npc.unknown1 = 1
+        boss_npc.background_layer = 2
         boss_npc.set_event_address(boss_choice8)
-        number024_npc_id = self.maps.append_npc(self.DEBUG_ROOM2, boss_npc)
-        space.write(
-            field.EntityAct(number024_npc_id, True,
-                field_entity.AnimateStaticNPC(),
-            )
-        )
+        self.maps.append_npc(self.DEBUG_ROOM2, boss_npc)
+
         boss_choice_dialog9 = 2995
         self.dialogs.set_text(boss_choice_dialog9, '<choice>SrBehemoth<line><choice>Doom Gaze<line><choice>Phunbaba 4<line><choice>(cancel)<end>')
         space = Allocate(Bank.CA, 100, "Boss Selection", field.NOP())
@@ -382,13 +375,10 @@ class DebugRoom(Event):
         boss_npc = NPC()
         boss_npc.x = 85
         boss_npc.y = 21
-        boss_npc.direction = direction.DOWN
-        #boss_npc.no_face_on_trigger = 1
         boss_npc.sprite = 86
         boss_npc.palette = 3
-        #boss_npc.unknown1 = 1
-        #boss_npc.unknown2 = 1
-        #boss_npc.const_sprite = 1
+        boss_npc.unknown1 = 1
+        boss_npc.background_layer = 2
         boss_npc.set_event_address(boss_choice11)
         self.maps.append_npc(self.DEBUG_ROOM2, boss_npc)
         
@@ -407,13 +397,10 @@ class DebugRoom(Event):
         boss_npc = NPC()
         boss_npc.x = 74
         boss_npc.y = 19
-        boss_npc.direction = direction.DOWN
-        #boss_npc.no_face_on_trigger = 1
         boss_npc.sprite = 69
         boss_npc.palette = 4
-        #boss_npc.unknown1 = 1
-        #boss_npc.unknown2 = 1
-        #boss_npc.const_sprite = 1
+        boss_npc.unknown1 = 1
+        boss_npc.background_layer = 2
         boss_npc.set_event_address(boss_choice12)
         self.maps.append_npc(self.DEBUG_ROOM2, boss_npc)
         
