@@ -27,10 +27,16 @@ class DebugRoom(Event):
         if self.args.kprac:
             BLACKJACK_INTERIOR_MAP = 0x07
             STRAGO_HOUSE_MAP = 0x15d
+            KOHLINGEN_MAP = 0xc3
+            DARYLS_TOMB_STAIRS = 0x12d
             while(self.maps.get_npc_count(0xd9) > 0):
                 self.maps.remove_npc(0xd9, 0)
             while(self.maps.get_npc_count(0x37) > 0):
                 self.maps.remove_npc(0x37, 0)
+            while(self.maps.get_npc_count(0xc3) > 0):
+                self.maps.remove_npc(0xc3, 0)
+            while(self.maps.get_npc_count(0x12d) > 0):
+                self.maps.remove_npc(0x12d, 0)
             #MAP_MAX = 413
             #for map in range(BLACKJACK_INTERIOR_MAP+1,MAP_MAX):
             #    if map != STRAGO_HOUSE_MAP:
@@ -494,7 +500,7 @@ class DebugRoom(Event):
         heal_npc.x = 81
         heal_npc.y = 25
         heal_npc.direction = direction.DOWN
-        heal_npc.sprite = 15
+        heal_npc.sprite = 41
         heal_npc.palette = 0
         src = [
             field.Call(field.HEAL_PARTY_HP_MP_STATUS),
