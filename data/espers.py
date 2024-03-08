@@ -45,6 +45,11 @@ class Espers():
             self.espers.append(esper)
 
         self.available_espers = set(range(self.ESPER_COUNT))
+        # if prac2 (No Calmness), then do not give Fenrir, Golem, Phantom
+        if self.args.prac2:
+            self.available_espers.remove("Fenrir")
+            self.available_espers.remove("Golem")
+            self.available_espers.remove("Phantom")
         self.starting_espers = []
 
         if args.starting_espers_min > 0:

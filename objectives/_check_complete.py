@@ -25,8 +25,8 @@ class Field(_CachedFunction, field.Call):
             field.SetEventBit(objective_event_bit),
         ]
         import args
-        # if not Kefka Practice, use objective dialog, otherwise no need
-        if not args.kprac:
+        # if not Practice, use objective dialog, otherwise no need
+        if not args.prac:
             src += [
                 field.Dialog(dialogs.OBJECTIVES[objective.id]),
             ]

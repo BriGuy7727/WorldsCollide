@@ -155,13 +155,6 @@ def process(args):
         args.ability_scaling = False
         args.ability_scaling_factor = None
 
-    # override scaling if doing Kefka practice to be Max Level scaling, 
-    # set the level/HP/MP up to 4 * CED and since we give 27 espers, will be at 99
-    if args.kprac:
-         args.level_scaling_factor = 4
-         args.hp_mp_scaling_factor = 4
-
-
 def flags(args):
     flags = ""
 

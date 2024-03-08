@@ -66,7 +66,7 @@ def process(args):
             args.y_npc = True
             break
 
-    if args.kprac:
+    if args.prac:
         args.npc_dialog_tips = True
 
 def flags(args):

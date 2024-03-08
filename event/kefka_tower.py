@@ -19,15 +19,15 @@ class KefkaTower(Event):
             space.write(
                 field.SetEventBit(event_bit.UNLOCKED_FINAL_KEFKA),
             )
-        # If we're doing Final Kefka Practice, unlock Final Kefka (going straight to Kefka switches)
-        if self.args.kprac:
+        # If we're doing Practice, unlock Final Kefka (going straight to Kefka switches)
+        if self.args.prac:
             space.write(
                 field.SetEventBit(event_bit.UNLOCKED_FINAL_KEFKA),
             )
 
     def mod(self):
         # if we're doing practice, do Kefka landing mod
-        if self.args.kprac:
+        if self.args.prac:
             self.kefka_landing_mod()
         else:
             self.statue_landing_mod()
@@ -282,13 +282,13 @@ class KefkaTower(Event):
 
         space = Reserve(0xa01a2, 0xa02d5, "kefka tower first landing scene", field.NOP())
         # add Kefka switches landing
-        if self.args.kprac:
+        if self.args.prac:
             space.add_label("KEFKA_LANDING", self.kekfa_landing)
         else:
             space.add_label("STATUE_LANDING", self.statue_landing)
         space.add_label("ENTRANCE_LANDING", space.end_address + 1)
-        # only write out Kefka Landing if kefka practice
-        if self.args.kprac:
+        # only write out Kefka Landing if practice
+        if self.args.prac:
             space.write(
                 field.Pause(2), # NOTE: load-bearing pause, without a pause or dialog before party select the game
                                 #       enters an infinite loop. it seems like the game needs time to finish

@@ -29,16 +29,23 @@ class Arguments:
         self.parser.add_argument("-slog", dest = "stdout_log", action = "store_true", help = "Write log to stdout instead of file")
         self.parser.add_argument("-hf", dest = "hide_flags", action = "store_true", help = "Hide Flags (no log, no flags menu)")
 
-        # add Final Kefka practice argument here since this will radically alter the options for the seed
-        self.parser.add_argument("-kprac", dest = "kprac", action = "store_true", help = "Final Kefka Practice")
+        # add practice arguments here since it will radically alter the options for the seed
+        self.parser.add_argument("-prac", dest = "prac", action = "store_true", help = "Practice")
+        self.parser.add_argument("-prac2", dest = "prac2", action = "store_true", help = "Practice")
 
         for group in self.group_modules.values():
             group.parse(self.parser)
 
         self.parser.parse_args(namespace = self)
 
-        # if Kefka Practice, add debug option for character recruitment
-        if self.kprac:
+        from constants.spells import spell_id
+        # if Practice with no calmness protection (prac2), set on prac flag
+        if self.prac2:
+            self.prac = True
+            args.remove_learnable_spell_ids.append(spell_id["Life 3"])
+
+        # if Practice, add debug option for character recruitment
+        if self.prac:
            self.debug = True
            self.spoiler_log = True
 

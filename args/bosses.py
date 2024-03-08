@@ -46,7 +46,7 @@ def process(args):
         args.dragon_boss_location = BossLocations.SHUFFLE
     if vanilla_locations and args.statue_boss_location == BossLocations.MIX:
         args.statue_boss_location = BossLocations.SHUFFLE
-    if args.kprac:
+    if args.prac:
         args.boss_experience = False
 
 def flags(args):

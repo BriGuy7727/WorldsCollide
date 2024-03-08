@@ -22,7 +22,7 @@ class Airship(Event):
         self.fix_fly_offscreen_bug()
 
     def controls_mod(self):
-        if self.args.kprac:
+        if self.args.prac:
             fly_kefka_dialog = 1315
         else:
             fly_wor_fc_cancel_dialog = 1315
@@ -30,7 +30,7 @@ class Airship(Event):
         fly_wob_dg_cancel_dialog = 1293
         fly_wob_cancel_dialog = 1319
 
-        if self.args.kprac:
+        if self.args.prac:
             self.dialogs.set_text(fly_kefka_dialog, '<choice> (Kefka Battle)<line><choice> (Not just yet)<end>')
         else:
             self.dialogs.set_text(fly_wor_fc_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Ruin)<line><choice> (Floating Continent)<line><choice> (Not just yet)<end>')
@@ -40,9 +40,9 @@ class Airship(Event):
 
         lift_off = 0xaf58d
         enter_floating_continent = 0xa581a
-        if self.args.kprac:
+        if self.args.prac:
             import data.bosses
-            space = Allocate(Bank.CA, 16, "Final Kefka Practice Skip", field.NOP())
+            space = Allocate(Bank.CA, 16, "Practice Skip", field.NOP())
             enter_kefka = space.start_address
             space.write(
                 # Use the party select screen to put in recruited characters
@@ -60,8 +60,8 @@ class Airship(Event):
         self.enter_wob_mod(space)
         self.doom_gaze_mod(space)
 
-        # Final Kefka practice airship options
-        if self.args.kprac:
+        # Practice airship options (Final Kefka option)
+        if self.args.prac:
             fly_kefka_choice = space.next_address
             space.write(
                 field.DialogBranch(fly_kefka_dialog,
@@ -126,8 +126,8 @@ class Airship(Event):
                 field.BranchIfEventBitClear(event_bit.character_recruited(self.events["Floating Continent"].character_gate()),
                                             fly_wor_cancel_choice),
             )
-        # Final Kefka practice dialog option
-        if self.args.kprac:
+        # Practice dialog option
+        if self.args.prac:
             space.write(
                 field.Branch(fly_kefka_choice),
             )

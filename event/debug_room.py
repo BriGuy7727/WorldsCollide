@@ -23,8 +23,8 @@ class DebugRoom(Event):
         while(self.maps.get_npc_count(self.DEBUG_ROOM2) > 0):
             self.maps.remove_npc(self.DEBUG_ROOM2, 0)
         
-        # If Kefka Practice, don't need NPCs anywhere except the ones we add and Airship one
-        if self.args.kprac:
+        # If Practice, don't need NPCs anywhere except the ones we add and Airship one
+        if self.args.prac:
             BLACKJACK_INTERIOR_MAP = 0x07
             STRAGO_HOUSE_MAP = 0x15d
             KOHLINGEN_MAP = 0xc3

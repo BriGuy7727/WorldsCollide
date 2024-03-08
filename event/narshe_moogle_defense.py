@@ -535,7 +535,7 @@ class NarsheMoogleDefense(Event):
     def mod(self):
         self.terra_npc_mod() 
 
-        if self.args.debug and not self.args.kprac:
+        if self.args.debug and not self.args.prac:
             self.marshal_test_mod()
 
         self.marshal_npc_mod()

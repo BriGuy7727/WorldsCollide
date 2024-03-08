@@ -38,114 +38,73 @@ def process(args):
     args.objectives = []
     args.final_kefka_objective = False
 
-    # if doing Kefka Practice, ignore the input objectives & instead use the following:
-    #   All Lores           -oa 28.24.24.0.0
-    #   All Rages           -ob 29.255.255.0.0
-    #   All Blitzes         -oc 26.8.8.0.0
-    #   All SwdTechs        -od 30.8.8.0.0
-    #   Learn all spells    -oe 31.54.54.0.0
-    #   All Tools           -of 43.0.0
-    #   Magitek Upgrade     -og 59.0.0
-    #   Throwables          -oh 67.0.0
-    #   Restoratives        -oi 68.0.0
-    if args.kprac:
-        # Learn 24 Lores
-        objective = Objective('A', Result(*result_id_type[28], [24,24]), "", 0, 0)
-        args.objectives.append(objective)
-        # Learn 255 Rages
-        objective = Objective('B', Result(*result_id_type[29], [255,255]), "", 0, 0)
-        args.objectives.append(objective)
-        # Learn 8 Blitzes
-        objective = Objective('C', Result(*result_id_type[26], [8,8]), "", 0, 0)
-        args.objectives.append(objective)
-        # Learn 8 SwdTech
-        objective = Objective('D', Result(*result_id_type[30], [8,8]), "", 0, 0)
-        args.objectives.append(objective)
-        # Learn 255 Rages
-        objective = Objective('E', Result(*result_id_type[31], [54,54]), "", 0, 0)
-        args.objectives.append(objective)
-        # Give all Tools
-        objective = Objective('F', Result(*result_id_type[43], ""), "", 0, 0)
-        args.objectives.append(objective)
-        # Magitek Upgrade
-        objective = Objective('G', Result(*result_id_type[59], ""), "", 0, 0)
-        args.objectives.append(objective)
-        # Throwables
-        objective = Objective('H', Result(*result_id_type[67], ""), "", 0, 0)
-        args.objectives.append(objective)
-        # Restoratives
-        objective = Objective('I', Result(*result_id_type[68], ""), "", 0, 0)
-        args.objectives.append(objective)
+    for oi in range(MAX_OBJECTIVES):
+        lower_letter = chr(ord('a') + oi)
+        upper_letter = chr(ord('A') + oi)
 
+        values = getattr(args, "objective_" + lower_letter)
+        if values is not None:
+            values = values.split('.')
+            for vi in range(len(values)):
+                try:
+                    values[vi] = int(values[vi])
+                except ValueError:
+                    pass
+            value_index = 0
 
-    else:
-        for oi in range(MAX_OBJECTIVES):
-            lower_letter = chr(ord('a') + oi)
-            upper_letter = chr(ord('A') + oi)
+            result_type = result_id_type[values[value_index]]
+            value_index += 1
 
-            values = getattr(args, "objective_" + lower_letter)
-            if values is not None:
-                values = values.split('.')
-                for vi in range(len(values)):
-                    try:
-                        values[vi] = int(values[vi])
-                    except ValueError:
-                        pass
-                value_index = 0
+            if result_type.value_range is not None:
+                result_arg_count = 2
+            else:
+                result_arg_count = 0
+            result_args = values[value_index : value_index + result_arg_count]
+            value_index += result_arg_count
 
-                result_type = result_id_type[values[value_index]]
+            for arg in result_args:
+                if arg not in result_type.value_range:
+                    import sys
+                    args.parser.print_usage()
+                    print(f"{sys.argv[0]}: error: {result_type.name}: invalid argument {arg}")
+                    sys.exit(1)
+
+            result = Result(*result_type, result_args)
+
+            conditions_required_min = values[value_index]
+            value_index += 1
+            conditions_required_max = values[value_index]
+            value_index += 1
+
+            conditions = []
+            while value_index < len(values) and len(conditions) < MAX_CONDITIONS:
+                condition_type = condition_types[values[value_index]]
                 value_index += 1
 
-                if result_type.value_range is not None:
-                    result_arg_count = 2
-                else:
-                    result_arg_count = 0
-                result_args = values[value_index : value_index + result_arg_count]
-                value_index += result_arg_count
+                if condition_type.name == "None":
+                    continue
 
-                for arg in result_args:
-                    if arg not in result_type.value_range:
+                if condition_type.min_max:
+                    condition_arg_count = 2
+                else:
+                    condition_arg_count = 1
+                condition_args = values[value_index : value_index + condition_arg_count]
+                value_index += condition_arg_count
+
+                for arg in condition_args:
+                    if arg not in condition_type.value_range:
                         import sys
                         args.parser.print_usage()
-                        print(f"{sys.argv[0]}: error: {result_type.name}: invalid argument {arg}")
+                        print(f"{sys.argv[0]}: error: {condition_type.name}: invalid argument {arg}")
                         sys.exit(1)
 
-                result = Result(*result_type, result_args)
+                condition = Condition(*condition_type, condition_args)
+                conditions.append(condition)
 
-                conditions_required_min = values[value_index]
-                value_index += 1
-                conditions_required_max = values[value_index]
-                value_index += 1
-
-                conditions = []
-                while value_index < len(values) and len(conditions) < MAX_CONDITIONS:
-                    condition_type = condition_types[values[value_index]]
-                    value_index += 1
-
-                    if condition_type.name == "None":
-                        continue
-
-                    if condition_type.min_max:
-                        condition_arg_count = 2
-                    else:
-                        condition_arg_count = 1
-                    condition_args = values[value_index : value_index + condition_arg_count]
-                    value_index += condition_arg_count
-
-                    for arg in condition_args:
-                        if arg not in condition_type.value_range:
-                            import sys
-                            args.parser.print_usage()
-                            print(f"{sys.argv[0]}: error: {condition_type.name}: invalid argument {arg}")
-                            sys.exit(1)
-
-                    condition = Condition(*condition_type, condition_args)
-                    conditions.append(condition)
-
-                conditions_required_min = max(min(conditions_required_min, len(conditions)), 0)
-                conditions_required_max = max(min(conditions_required_max, len(conditions)), 0)
-                objective = Objective(upper_letter, result, conditions, conditions_required_min, conditions_required_max)
-                args.objectives.append(objective)
+            conditions_required_min = max(min(conditions_required_min, len(conditions)), 0)
+            conditions_required_max = max(min(conditions_required_max, len(conditions)), 0)
+            objective = Objective(upper_letter, result, conditions, conditions_required_min, conditions_required_max)
+            args.objectives.append(objective)
 
 def flags(args):
     flags = ""
