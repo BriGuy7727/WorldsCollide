@@ -16,8 +16,9 @@ def parse(parser):
     espers = parser.add_argument_group("Espers")
 
     esper_start = espers.add_mutually_exclusive_group()
+    # update to have all 27 espers on start being an option; we will override this later if not open world in args/arguments.py to 21
     esper_start.add_argument("-stesp", "--starting-espers", default = [0, 0], type = int,
-                             nargs = 2, metavar = ("MIN", "MAX"), choices = range(MAX_STARTING_ESPERS + 1),
+                             nargs = 2, metavar = ("MIN", "MAX"), choices = range(Espers.ESPER_COUNT),
                              help = "Party starts with %(metavar) random espers")
 
     esper_spells = espers.add_mutually_exclusive_group()

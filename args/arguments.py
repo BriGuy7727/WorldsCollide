@@ -30,8 +30,12 @@ class Arguments:
         self.parser.add_argument("-hf", dest = "hide_flags", action = "store_true", help = "Hide Flags (no log, no flags menu)")
 
         # add practice arguments here since it will radically alter the options for the seed
+        # -prac is "default" practice mode that grants everything
         self.parser.add_argument("-prac", dest = "prac", action = "store_true", help = "Practice")
+        # -prac2 eliminates Calmness protection (Fenrir, Golem, Phantom, Life 3)
         self.parser.add_argument("-prac2", dest = "prac2", action = "store_true", help = "Practice")
+        # -prac3 does not give the player all of the items
+        self.parser.add_argument("-prac3", dest = "prac3", action = "store_true", help = "Practice")        
 
         for group in self.group_modules.values():
             group.parse(self.parser)
@@ -40,14 +44,22 @@ class Arguments:
 
         from constants.spells import spell_id
         # if Practice with no calmness protection (prac2), set on prac flag
-        if self.prac2:
+        if self.prac2 or self.prac3:
             self.prac = True
-            args.remove_learnable_spell_ids.append(spell_id["Life 3"])
+            if self.prac2:
+                args.remove_learnable_spell_ids.append(spell_id["Life 3"])
 
         # if Practice, add debug option for character recruitment
         if self.prac:
            self.debug = True
            self.spoiler_log = True
+        
+        from args.espers import MAX_STARTING_ESPERS
+        # if character gating, ensure the min and max starting espers <= 21 (MAX_STARTING_ESPERS)
+        if args.settings.character_gating and args.starting_espers_min > MAX_STARTING_ESPERS:
+            args.starting_espers_min = MAX_STARTING_ESPERS
+        if args.settings.character_gating and args.starting_espers_max > MAX_STARTING_ESPERS:
+            args.starting_espers_max = MAX_STARTING_ESPERS
 
         self.flags = ""
         self.seed_rng_flags = ""

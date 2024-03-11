@@ -232,18 +232,18 @@ class Start(Event):
         # If doing Practice mod, give 6 of each item to start
         from objectives.results.throwables import THROWABLES
         from objectives.results.restoratives import RESTORATIVES
-        if self.args.prac:
+        if self.args.prac and not self.args.prac3:
             i = 1
             while i <= 6:
                 for item_id in id_name:
                     # Do not give any "Junk" AKA Tier 0 items (if a low-equipment run, can use default stuff)
                     # Do not give Throwables or Restoratives (can use an objective instead)
-                    # Do not give PaladinShld or CursedShld
+                    # Do not give CursedShld or Rename Card
                     # Do not give > 1 tool
                     # Do not give any relics other than:
                     # RunningShoes, Cherub Down, DragoonBoots, Earrings, Atlas Armlet, Blizzard Orb, Rage Ring
                     # Hero Ring, Ribbon, Muscle Belt, Crystal Orb, Gold Hairpin, Economizer, Gauntlet, GenjiGlove,
-                    # Hyper Wrist, Offering, Beads, Gem Box, Dragon Horn, Merit Award, Memento Ring, Safety Bit
+                    # Hyper Wrist, Offering, Beads, Gem Box, Dragon Horn, Merit Award, Memento Ring, Safety Bit,
                     # Marvel Shoes, Sniper Sight, Wall Ring, True Knight
                     ignore_items = ["Goggles", "Star Pendant", "Amulet", "White Cape", "Jewel Ring", "Fairy Ring", "Barrier Ring"
                                     "MithrilGlove", "Guard Ring", "Cure Ring", "Zephyr Cape", "Czarina Ring", "Cursed Ring", 
