@@ -42,24 +42,14 @@ class Arguments:
 
         self.parser.parse_args(namespace = self)
 
-        from constants.spells import spell_id
         # if Practice with no calmness protection (prac2), set on prac flag
         if self.prac2 or self.prac3:
             self.prac = True
-            if self.prac2:
-                args.remove_learnable_spell_ids.append(spell_id["Life 3"])
 
         # if Practice, add debug option for character recruitment
         if self.prac:
            self.debug = True
            self.spoiler_log = True
-        
-        from args.espers import MAX_STARTING_ESPERS
-        # if character gating, ensure the min and max starting espers <= 21 (MAX_STARTING_ESPERS)
-        if args.settings.character_gating and args.starting_espers_min > MAX_STARTING_ESPERS:
-            args.starting_espers_min = MAX_STARTING_ESPERS
-        if args.settings.character_gating and args.starting_espers_max > MAX_STARTING_ESPERS:
-            args.starting_espers_max = MAX_STARTING_ESPERS
 
         self.flags = ""
         self.seed_rng_flags = ""

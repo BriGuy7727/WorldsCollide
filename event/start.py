@@ -229,10 +229,87 @@ class Start(Event):
                 field.AddItem(id_name[junk_id], sound_effect = False)
             ]
 
-        # If doing Practice mod, give 6 of each item to start
-        from objectives.results.throwables import THROWABLES
-        from objectives.results.restoratives import RESTORATIVES
-        if self.args.prac and not self.args.prac3:
+        # If doing Practice mod, but user requested not all items, randomize the set of starting items
+        if self.args.prac3:
+            from data.item_names import name_id
+            # 50% chance of Megalixir or not
+            if random.randint(0,1) == 0:
+                src += [
+                    field.AddItem(name_id["Megalixir"], sound_effect = False),
+                ]
+            # Do we simulate opening 100 chests?
+            i = 1
+            while i <= 100:
+                # this code copied from random_tiered function to return an item based on random tier
+                from data.chest_item_tiers import weights, tiers as chesttiers, tier_s_distribution
+                from utils.weighted_random import weighted_random
+                random_tier = weighted_random(weights)
+                random_tier_index = random.randrange(len(chesttiers[random_tier]))
+                if random_tier < len(weights) - 1: # not s tier, use equal distribution
+                    random_tier_index = random.randrange(len(chesttiers[random_tier]))
+                    src += [
+                        field.AddItem(chesttiers[random_tier][random_tier_index], sound_effect = False)
+                    ]
+                else:
+                    weights = [entry[1] for entry in tier_s_distribution]
+                    random_s_index = weighted_random(weights)
+                    src += [
+                        field.AddItem(tier_s_distribution[random_s_index][0], sound_effect = False)
+                    ]
+                # end of code copied from random_tiered function to return an item based on random tier
+                # Give 10 Fenix Downs
+                if i <= 10:
+                    src += [
+                        field.AddItem(name_id["Fenix Down"], sound_effect = False)
+                    ]
+                # 4 50% chances of getting status clearing items & Elixir, X-Potion, X-Ether
+                # Always give 4 Revivify, Earrings
+                if i <= 4:
+                    if random.randint(0,1) == 0:
+                        src += [
+                            field.AddItem(name_id["Antidote"], sound_effect = False),
+                        ]
+                    if random.randint(0,1) == 0:
+                        src += [
+                            field.AddItem(name_id["Echo Screen"], sound_effect = False),
+                        ]
+                    if random.randint(0,1) == 0:
+                        src += [
+                            field.AddItem(name_id["Eyedrop"], sound_effect = False),
+                        ]
+                    if random.randint(0,1) == 0:
+                        src += [
+                            field.AddItem(name_id["Green Cherry"], sound_effect = False),
+                        ]
+                    if random.randint(0,1) == 0:
+                        src += [
+                            field.AddItem(name_id["Soft"], sound_effect = False),
+                        ]
+                    if random.randint(0,1) == 0:
+                        src += [
+                            field.AddItem(name_id["Remedy"], sound_effect = False),
+                        ]
+                    if random.randint(0,1) == 0:
+                        src += [
+                            field.AddItem(name_id["X-Potion"], sound_effect = False),
+                        ]
+                    if random.randint(0,1) == 0:
+                        src += [
+                            field.AddItem(name_id["Elixir"], sound_effect = False),
+                        ]
+                    if random.randint(0,1) == 0:
+                        src += [
+                            field.AddItem(name_id["X-Ether"], sound_effect = False),
+                        ]
+                    src += [
+                        field.AddItem(name_id["Revivify"], sound_effect = False),
+                        field.AddItem(name_id["Earrings"], sound_effect = False),
+                    ]
+                i += 1
+        # If doing Practice mod with all items settting 
+        elif self.args.prac:
+            from objectives.results.throwables import THROWABLES
+            from objectives.results.restoratives import RESTORATIVES
             i = 1
             while i <= 6:
                 for item_id in id_name:

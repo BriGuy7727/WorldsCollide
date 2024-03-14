@@ -18,7 +18,7 @@ def parse(parser):
     esper_start = espers.add_mutually_exclusive_group()
     # update to have all 27 espers on start being an option; we will override this later if not open world in args/arguments.py to 21
     esper_start.add_argument("-stesp", "--starting-espers", default = [0, 0], type = int,
-                             nargs = 2, metavar = ("MIN", "MAX"), choices = range(Espers.ESPER_COUNT),
+                             nargs = 2, metavar = ("MIN", "MAX"), choices = range(Espers.ESPER_COUNT + 1),
                              help = "Party starts with %(metavar) random espers")
 
     esper_spells = espers.add_mutually_exclusive_group()
@@ -80,6 +80,17 @@ def process(args):
     args._process_min_max("esper_mp_random_value")
     args._process_min_max("esper_mp_random_percent")
     args._process_min_max("esper_equipable_random")
+
+    # if character gating, ensure the min and max starting espers <= 21 (MAX_STARTING_ESPERS)
+    if args.character_gating and args.starting_espers_min > MAX_STARTING_ESPERS:
+        args.starting_espers_min = MAX_STARTING_ESPERS
+    if args.character_gating and args.starting_espers_max > MAX_STARTING_ESPERS:
+        args.starting_espers_max = MAX_STARTING_ESPERS
+
+    # if a No Calmness practice, remove Life 3
+    from constants.spells import spell_id
+    if args.prac2:
+        args.remove_learnable_spell_ids.append(spell_id["Life 3"])
 
     # Forces random learnrates if espers are not original/shuffled and learnrates are not set to tiered
     randomized_espers = args.esper_spells_random or args.esper_spells_random_tiered
