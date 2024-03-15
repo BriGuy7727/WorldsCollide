@@ -147,10 +147,6 @@ class Start(Event):
     def start_esper_mod(self):
         src = []
 
-        # give all of the espers if doing practice
-        if self.args.prac:
-            self.espers.starting_espers = self.espers.esper_menu_order
-
         for esper_id in self.espers.starting_espers:
             src += [
                 field.AddEsper(esper_id, sound_effect = False)

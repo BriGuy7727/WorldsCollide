@@ -33,16 +33,16 @@ class Arguments:
         # -prac is "default" practice mode that grants everything
         self.parser.add_argument("-prac", dest = "prac", action = "store_true", help = "Practice")
         # -prac2 eliminates Calmness protection (Fenrir, Golem, Phantom, Life 3)
-        self.parser.add_argument("-prac2", dest = "prac2", action = "store_true", help = "Practice")
+        self.parser.add_argument("-prac2", dest = "prac2", action = "store_true", help = "Practice2")
         # -prac3 does not give the player all of the items
-        self.parser.add_argument("-prac3", dest = "prac3", action = "store_true", help = "Practice")        
+        self.parser.add_argument("-prac3", dest = "prac3", action = "store_true", help = "Practice3")        
 
         for group in self.group_modules.values():
             group.parse(self.parser)
 
         self.parser.parse_args(namespace = self)
 
-        # if Practice with no calmness protection (prac2), set on prac flag
+        # if Practice with no calmness protection (prac2) or not all items (prac3), set on prac flag
         if self.prac2 or self.prac3:
             self.prac = True
 

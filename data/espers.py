@@ -46,10 +46,16 @@ class Espers():
 
         self.available_espers = set(range(self.ESPER_COUNT))
         # if prac2 (No Calmness), then do not give Fenrir, Golem, Phantom
-        if self.args.prac2:
-            self.available_espers.remove("Fenrir")
-            self.available_espers.remove("Golem")
-            self.available_espers.remove("Phantom")
+        if args.prac2:
+            self.available_espers.remove(self.FENRIR)
+            self.available_espers.remove(self.GOLEM)
+            self.available_espers.remove(self.PHANTOM)
+            # if requested more than 24 espers, only give 24 since we removed 3 from the list
+            if args.starting_espers_min > 24:
+                args.starting_espers_min = 24
+            if args.starting_espers_max > 24:
+                args.starting_espers_max = 24
+
         self.starting_espers = []
 
         if args.starting_espers_min > 0:

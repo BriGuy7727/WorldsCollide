@@ -87,11 +87,6 @@ def process(args):
     if args.character_gating and args.starting_espers_max > MAX_STARTING_ESPERS:
         args.starting_espers_max = MAX_STARTING_ESPERS
 
-    # if a No Calmness practice, remove Life 3
-    from constants.spells import spell_id
-    if args.prac2:
-        args.remove_learnable_spell_ids.append(spell_id["Life 3"])
-
     # Forces random learnrates if espers are not original/shuffled and learnrates are not set to tiered
     randomized_espers = args.esper_spells_random or args.esper_spells_random_tiered
     if randomized_espers and args.esper_learnrates_random_tiered != True:
