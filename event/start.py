@@ -228,38 +228,42 @@ class Start(Event):
         # If doing Practice mod, but user requested not all items, randomize the set of starting items
         if self.args.prac3:
             from data.item_names import name_id
-            # 50% chance of Megalixir or not
+            # 50% chance of 1 Megalixir or not
             if random.randint(0,1) == 0:
                 src += [
                     field.AddItem(name_id["Megalixir"], sound_effect = False),
                 ]
-            # Do we simulate opening 100 chests?
+            # 50% chance of 1 Paladin Shld or not
+            if random.randint(0,1) == 0:
+                src += [
+                    field.AddItem(name_id["Paladin Shld"], sound_effect = False),
+                ]
+            # Do we simulate opening 50 chests?
+            # give consumables separately
+            # 50 is enough so that we'll get lots of decent items in other tiers
             i = 1
-            while i <= 100:
-                # this code copied from random_tiered function to return an item based on random tier
-                from data.chest_item_tiers import weights, tiers as chesttiers, tier_s_distribution
+            while i <= 50:
+                # don't grab chest from tier 0-4 as they're consumable items, we will distribute them differently, 
+                # otherwise grab a random item from tiers 5-9, weighted as follows: 10, 20, 25, 30, 15
+                # this code copied from random_tiered function to return an item based on random tier, but updated slightly to fit above criteria
+                from data.chest_item_tiers import tiers as chesttiers, tier_s_distribution
                 from utils.weighted_random import weighted_random
+                weights = [0, 0, 0, 0, 0, 0.10, 0.20, 0.25, 0.30, 0.15]
                 random_tier = weighted_random(weights)
+                random_tier_index = random.randrange(5,9)
+                # always use equal distribution
                 random_tier_index = random.randrange(len(chesttiers[random_tier]))
-                if random_tier < len(weights) - 1: # not s tier, use equal distribution
-                    random_tier_index = random.randrange(len(chesttiers[random_tier]))
-                    src += [
-                        field.AddItem(chesttiers[random_tier][random_tier_index], sound_effect = False)
-                    ]
-                else:
-                    weights = [entry[1] for entry in tier_s_distribution]
-                    random_s_index = weighted_random(weights)
-                    src += [
-                        field.AddItem(tier_s_distribution[random_s_index][0], sound_effect = False)
-                    ]
+                src += [
+                    field.AddItem(chesttiers[random_tier][random_tier_index], sound_effect = False)
+                ]
                 # end of code copied from random_tiered function to return an item based on random tier
-                # Give 10 Fenix Downs
-                if i <= 10:
+                # Give 6 Fenix Downs
+                if i <= 6:
                     src += [
                         field.AddItem(name_id["Fenix Down"], sound_effect = False)
                     ]
                 # 4 50% chances of getting status clearing items & Elixir, X-Potion, X-Ether
-                # Always give 4 Revivify, Earrings
+                # Always give 4 Earrings
                 if i <= 4:
                     if random.randint(0,1) == 0:
                         src += [
@@ -297,8 +301,11 @@ class Start(Event):
                         src += [
                             field.AddItem(name_id["X-Ether"], sound_effect = False),
                         ]
+                    if random.randint(0,1) == 0:
+                        src += [
+                            field.AddItem(name_id["Revivify"], sound_effect = False),
+                        ]
                     src += [
-                        field.AddItem(name_id["Revivify"], sound_effect = False),
                         field.AddItem(name_id["Earrings"], sound_effect = False),
                     ]
                 i += 1
