@@ -181,6 +181,9 @@ DEFEATED_KEFKA_TOWER_DRAGON_S = 0x11e # custom, skull dragon location
 DEFEATED_ANCIENT_CASTLE_DRAGON = 0x11f # custom
 DEFEATED_PHOENIX_CAVE_DRAGON = 0x120 # custom
 DEFEATED_FANATICS_TOWER_DRAGON = 0x121 # custom
+# used in Location Gating modes
+UNLOCKED_WOR = 0x122 # custom
+UNLOCKED_WOB = 0x123 # custom
 
 # KT Battles
 DEFEATED_GUARDIAN = 0x0bc

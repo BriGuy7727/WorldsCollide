@@ -7,6 +7,12 @@ def parse(parser):
                       help = "Unrestricted event access")
     mode.add_argument("-cg", "--character-gating", action = "store_true",
                       help = "Events locked until required characters recruited")
+    # location-gating mode #1
+    mode.add_argument("-lg1", "--location-gating1", action = "store_true",
+                      help = "World of Ruin access locked until conditions are met. Locations contain specific rewards.")
+    # location-gating mode #2
+    mode.add_argument("-lg2", "--location-gating2", action = "store_true",
+                      help = "World of Ruin access locked until conditions are met. Locations contain specific rewards.")
 
     seed_spoilers = parser.add_argument_group("seed_spoilers")
     seed_spoilers.add_argument("-s", dest = "seed", type = str, required = False, help = "RNG seed")
@@ -23,6 +29,12 @@ def flags(args):
         flags += " -cg"
     elif args.open_world:
         flags += " -open"
+    # location-gating mode #1
+    elif args.location_gating1:
+        flags += " -lg1"
+    # location-gating mode #2
+    elif args.location_gating2:
+        flags += " -lg1"
 
     if args.spoiler_log:
         flags += " -sl"
@@ -33,6 +45,12 @@ def options(args):
     game_mode = "Open World"
     if args.character_gating:
         game_mode = "Character Gating"
+    # location-gating mode #1
+    elif args.location_gating1:
+        game_mode = "Location Gating 1"
+    # location-gating mode #2
+    elif args.location_gating2:
+        game_mode = "Location Gating 2"
 
     return [
         ("Mode", game_mode, "game_mode"),

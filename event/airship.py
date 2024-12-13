@@ -26,11 +26,18 @@ class Airship(Event):
         fly_wor_cancel_dialog = 1318
         fly_wob_dg_cancel_dialog = 1293
         fly_wob_cancel_dialog = 1319
+        # new dialogues that do NOT include WOR or WOB choices for location gating
+        fly_fc_cancel_dialog = 1324
+        fly_dg_cancel_dialog = 1325
+        fly_cancel_dialog = 1326
 
         self.dialogs.set_text(fly_wor_fc_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Ruin)<line><choice> (Floating Continent)<line><choice> (Not just yet)<end>')
         self.dialogs.set_text(fly_wor_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Ruin)<line><choice> (Not just yet)<end>')
         self.dialogs.set_text(fly_wob_dg_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Balance)<line><choice> (Search The Skies)<line><choice> (Not just yet)<end>')
-        self.dialogs.set_text(fly_wob_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Balance)<line><choice> (Not just yet)<end>')
+        # new dialogues that do NOT include WOR or WOB choices for location gating
+        self.dialogs.set_text(fly_fc_cancel_dialog, '<choice> (Lift-off)<line><choice> (Floating Continent)<line><choice> (Not just yet)<end>')
+        self.dialogs.set_text(fly_dg_cancel_dialog, '<choice> (Lift-off)<line><choice> (Search the Skies)<line><choice> (Not just yet)<end>')
+        self.dialogs.set_text(fly_cancel_dialog, '<choice> (Lift-off)<line><choice> (Not just yet)<end>')
 
         lift_off = 0xaf58d
         enter_floating_continent = 0xa581a
@@ -74,33 +81,98 @@ class Airship(Event):
                                dest2 = self.enter_wob,
                                dest3 = field.RETURN),
         )
+        # WOB dialogue with FC no WOR option
+        fly_fc_cancel_choice = space.next_address
+        space.write(
+            field.DialogBranch(fly_fc_cancel_dialog,
+                               dest1 = lift_off,
+                               dest2 = enter_floating_continent,
+                               dest3 = field.RETURN),
+        )
+        # WOR dialogue with DG no WOB option
+        fly_dg_cancel_choice = space.next_address
+        space.write(
+            field.DialogBranch(fly_dg_cancel_dialog,
+                               dest1 = lift_off,
+                               dest2 = self.find_doom_gaze,
+                               dest3 = field.RETURN),
+        )
+        # Option when either FC (WOB) or DG (WOR) complete, but not the bit to indicate WOB or WOR access allowed
+        fly_cancel_choice = space.next_address
+        space.write(
+            field.DialogBranch(fly_cancel_dialog,
+                               dest1 = lift_off,
+                               dest2 = field.RETURN),
+        )
 
         # airship wor controls branching
         wor_control_checks = space.next_address
-        if self.args.character_gating:
+        # if Location Gating, 4 different Airship Control options
+        if self.args.location_gating1 or self.args.location_gating2:
+            # Use Fly/WOB/DG/Cancel if WOB is unlocked and Doom Gaze not defeated
             space.write(
-                field.BranchIfEventBitClear(event_bit.character_recruited(self.events["Doom Gaze"].character_gate()),
-                                            fly_wob_cancel_choice),
+                field.BranchIfAll([event_bit.UNLOCKED_WOB, True, event_bit.DEFEATED_DOOM_GAZE, False], fly_wob_dg_cancel_choice),
             )
-        space.write(
-            field.BranchIfBattleEventBitClear(battle_bit.DEFEATED_DOOM_GAZE, fly_wob_dg_cancel_choice),
-            field.Branch(fly_wob_cancel_choice),
-        )
+            # Use Fly/DG/Cancel if WOB is locked and Doom Gaze not defeated
+            space.write(
+                field.BranchIfAll([event_bit.UNLOCKED_WOB, False, event_bit.DEFEATED_DOOM_GAZE, False], fly_dg_cancel_choice),
+            )
+            # Use Fly/WOB/Cancel if WOB is unlocked and Doom Gaze is defeated
+            space.write(
+                field.BranchIfAll([event_bit.UNLOCKED_WOB, True, event_bit.DEFEATED_DOOM_GAZE, True], fly_wob_cancel_choice),
+            )
+            # Use Fly/Cancel if WOB is locked and Doom Gaze is defeated (only other condition remaining)
+            space.write(
+                field.Branch(fly_cancel_choice),
+            )
+        # Else CG or Open
+        else:
+            if self.args.character_gating:
+                space.write(
+                    field.BranchIfEventBitClear(event_bit.character_recruited(self.events["Doom Gaze"].character_gate()),
+                                                fly_wob_cancel_choice),
+                )
+            space.write(
+                field.BranchIfBattleEventBitClear(battle_bit.DEFEATED_DOOM_GAZE, fly_wob_dg_cancel_choice),
+                field.Branch(fly_wob_cancel_choice),
+            )
 
         # airship controls branching
         space = Reserve(0xaf53a, 0xaf559, "airship controls wor event bit check", field.NOP())
         space.write(
             field.BranchIfEventBitSet(event_bit.IN_WOR, wor_control_checks),
-            field.BranchIfEventBitSet(event_bit.FINISHED_FLOATING_CONTINENT, fly_wor_cancel_choice),
         )
-        if self.args.character_gating:
+        # if Location Gating, 4 different Airship Control options
+        if self.args.location_gating1 or self.args.location_gating2:
+            # Use Fly/WOR/FC/Cancel if WOR is unlocked and FC not finished
             space.write(
-                field.BranchIfEventBitClear(event_bit.character_recruited(self.events["Floating Continent"].character_gate()),
-                                            fly_wor_cancel_choice),
+                field.BranchIfAll([event_bit.UNLOCKED_WOR, True, event_bit.FINISHED_FLOATING_CONTINENT, False], fly_wor_fc_cancel_choice),
             )
-        space.write(
-            field.Branch(fly_wor_fc_cancel_choice),
-        )
+            # Use Fly/DG/Cancel if WOR is locked and FC not finished
+            space.write(
+                field.BranchIfAll([event_bit.UNLOCKED_WOR, False, event_bit.FINISHED_FLOATING_CONTINENT, False], fly_fc_cancel_choice),
+            )
+            # Use Fly/WOB/Cancel if WOR is unlocked and FC is finished
+            space.write(
+                field.BranchIfAll([event_bit.UNLOCKED_WOR, True, event_bit.FINISHED_FLOATING_CONTINENT, True], fly_wor_cancel_choice),
+            )
+            # Use Fly/Cancel if WOR is locked and FC is finished (only other condition remaining)
+            space.write(
+                field.Branch(fly_cancel_choice),
+            )
+        # else CG or Open
+        else:
+            space.write(
+                field.BranchIfEventBitSet(event_bit.FINISHED_FLOATING_CONTINENT, fly_wor_cancel_choice),
+            )
+            if self.args.character_gating:
+                space.write(
+                    field.BranchIfEventBitClear(event_bit.character_recruited(self.events["Floating Continent"].character_gate()),
+                                                fly_wor_cancel_choice),
+                )
+            space.write(
+                field.Branch(fly_wor_fc_cancel_choice),
+            )
 
     def enter_wor_mod(self, space):
         self.enter_wor = space.next_address

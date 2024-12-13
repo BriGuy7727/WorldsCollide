@@ -83,6 +83,10 @@ category_types = {
         ResultType(56, "Imp Song", "Imp Song", None),
         ResultType(57, "Sour Mouth", "Sour Mouth", None),
     ],
+    "World Access" : [
+        ResultType(74, "World of Ruin Access", "World of Ruin Access", None),
+        ResultType(75, "World of Balance Access", "World of Balance Access", None),
+    ],
 }
 
 #Additional results
