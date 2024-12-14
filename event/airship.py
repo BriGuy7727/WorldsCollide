@@ -81,6 +81,7 @@ class Airship(Event):
                                dest2 = self.enter_wob,
                                dest3 = field.RETURN),
         )
+        space = Allocate(Bank.CA, 298, "more airship controls dialog/choices", field.NOP())
         # WOB dialogue with FC no WOR option
         fly_fc_cancel_choice = space.next_address
         space.write(
@@ -138,7 +139,7 @@ class Airship(Event):
             )
 
         # airship controls branching
-        space = Reserve(0xaf53a, 0xaf559, "airship controls wor event bit check", field.NOP())
+        space = Reserve(0xaf53a, 0xaf55d, "airship controls wor event bit check", field.NOP())
         space.write(
             field.BranchIfEventBitSet(event_bit.IN_WOR, wor_control_checks),
         )

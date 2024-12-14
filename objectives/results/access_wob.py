@@ -14,6 +14,6 @@ class Battle(battle_result.Result):
         ]
 
 class Result(ObjectiveResult):
-    NAME = "Access World of Balance"
+    NAME = "World of Balance Access"
     def __init__(self):
         super().__init__(Field, Battle)
