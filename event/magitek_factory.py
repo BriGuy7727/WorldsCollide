@@ -8,9 +8,15 @@ class MagitekFactory(Event):
         return self.characters.CELES
 
     def init_rewards(self):
-        self.reward1 = self.add_reward(RewardType.ESPER | RewardType.ITEM)
-        self.reward2 = self.add_reward(RewardType.ESPER | RewardType.ITEM)
-        self.reward3 = self.add_reward(RewardType.CHARACTER | RewardType.ESPER)
+        # if location gating mode, "rewards" are items, but they don't go in your inventory...need to give a reward for game's logic
+        if self.args.location_gating1:
+            self.reward1 = self.add_reward(RewardType.ITEM)
+            self.reward2 = self.add_reward(RewardType.ITEM)
+            self.reward3 = self.add_reward(RewardType.ITEM)
+        else:
+            self.reward1 = self.add_reward(RewardType.ESPER | RewardType.ITEM)
+            self.reward2 = self.add_reward(RewardType.ESPER | RewardType.ITEM)
+            self.reward3 = self.add_reward(RewardType.CHARACTER | RewardType.ESPER)
 
     def init_event_bits(self, space):
         space.write(
@@ -25,16 +31,26 @@ class MagitekFactory(Event):
 
         self.vector_mod()
 
-        if self.reward1.type == RewardType.ESPER:
-            self.ifrit_shiva_esper_mod(self.reward1.id)
-        elif self.reward1.type == RewardType.ITEM:
-            self.ifrit_shiva_item_mod(self.reward1.id)
+        # if not location gated, give trash reward
+        if not self.args.location_gating1:
+            if self.reward1.type == RewardType.ESPER:
+                self.ifrit_shiva_esper_mod(self.reward1.id)
+            elif self.reward1.type == RewardType.ITEM:
+                self.ifrit_shiva_item_mod(self.reward1.id)
+        # else location gated, give nothing
+        else:
+            self.ifrit_shiva_mod(field.NOP())
         self.ifrit_shiva_battle_mod()
 
-        if self.reward2.type == RewardType.ESPER:
-            self.number024_esper_mod(self.reward2.id)
-        elif self.reward2.type == RewardType.ITEM:
-            self.number024_item_mod(self.reward2.id)
+        # if not location gated, give guard reward
+        if not self.args.location_gating1:
+            if self.reward2.type == RewardType.ESPER:
+                self.number024_esper_mod(self.reward2.id)
+            elif self.reward2.type == RewardType.ITEM:
+                self.number024_item_mod(self.reward2.id)
+        # else location gated, give nothing
+        else:
+            self.number024_mod(field.NOP())
 
         self.esper_tubes_mod()
 
@@ -43,18 +59,26 @@ class MagitekFactory(Event):
             self.fixed_battles_mod()
         self.number128_battle_mod()
 
-        if self.reward3.type == RewardType.CHARACTER:
-            self.character_mod(self.reward3.id)
-        elif self.reward3.type == RewardType.ESPER:
-            self.esper_mod(self.reward3.id)
+        # if not location gated, give finish reward
+        if not self.args.location_gating1:
+            if self.reward3.type == RewardType.CHARACTER:
+                self.character_mod(self.reward3.id)
+            elif self.reward3.type == RewardType.ESPER:
+                self.esper_mod(self.reward3.id)
+        # else location gated, use item mod, but give nothing
+        else:
+            self.item_mod(self.reward3.id)
+
 
         self.crane_battle_mod()
         self.after_cranes_mod()
         self.guardian_mod()
 
-        self.log_reward(self.reward1)
-        self.log_reward(self.reward2)
-        self.log_reward(self.reward3)
+        # if not location_gating1, don't log rewards
+        if not self.args.location_gating1:
+            self.log_reward(self.reward1)
+            self.log_reward(self.reward2)
+            self.log_reward(self.reward3)
 
     def vector_mod(self):
         # npcs used to block/enter magitek factory
@@ -321,6 +345,29 @@ class MagitekFactory(Event):
             field.WaitForFade(),
             field.Branch(space.end_address + 1), # skip nops
         )
+
+    # Magitek Factory Finish item code
+    def item_mod(self, item):
+        self.setzer_npc.sprite = self.characters.get_random_esper_item_sprite()
+        self.setzer_npc.palette = self.characters.get_palette(self.setzer_npc.sprite)
+
+        space = Reserve(0xc819b, 0xc8302, "magitek factory add char and kefka cranes scene", field.NOP())
+        # if not location gated, add item to inventory
+        if not self.args.location_gating1:
+            space.write(
+                field.AddItem(item),
+                field.Dialog(self.items.get_receive_dialog(item)),
+                field.FadeOutScreen(),
+                field.WaitForFade(),
+                field.Branch(space.end_address + 1),  # skip nops
+            )
+        # else location gated, do not add item
+        else:
+            space.write(
+                field.FadeOutScreen(),
+                field.WaitForFade(),
+                field.Branch(space.end_address + 1),  # skip nops
+            )
 
     def crane_battle_mod(self):
         boss_pack_id = self.get_boss("Cranes")

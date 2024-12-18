@@ -8,7 +8,8 @@ class CollapsingHouse(Event):
         return self.characters.SABIN
 
     def init_rewards(self):
-        if self.args.no_free_characters_espers:
+        # if NFP or Location Gating mode, make an item
+        if self.args.no_free_characters_espers or self.args.location_gating1:
             self.reward = self.add_reward(RewardType.ITEM)
         else:
             self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)

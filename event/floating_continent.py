@@ -15,9 +15,15 @@ class FloatingContinent(Event):
         return self.characters.SHADOW
 
     def init_rewards(self):
-        self.reward1 = self.add_reward(RewardType.CHARACTER | RewardType.ESPER)
-        self.reward2 = self.add_reward(RewardType.ESPER | RewardType.ITEM)
-        self.reward3 = self.add_reward(RewardType.CHARACTER | RewardType.ESPER)
+        # if location gating mode, "rewards" are items, but they don't go in your inventory...need to give a reward for game's logic
+        if self.args.location_gating1:
+            self.reward1 = self.add_reward(RewardType.ITEM)
+            self.reward2 = self.add_reward(RewardType.ITEM)
+            self.reward3 = self.add_reward(RewardType.ITEM)
+        else:
+            self.reward1 = self.add_reward(RewardType.CHARACTER | RewardType.ESPER)
+            self.reward2 = self.add_reward(RewardType.ESPER | RewardType.ITEM)
+            self.reward3 = self.add_reward(RewardType.CHARACTER | RewardType.ESPER)
 
     def mod(self):
         self.shadow_leaves_mod()
@@ -30,34 +36,48 @@ class FloatingContinent(Event):
         self.ground_shadow_npc_id = 0x1b
         self.ground_shadow_npc = self.maps.get_npc(0x18a, self.ground_shadow_npc_id)
 
-        self.ground_reward_position_mod()
-        if self.reward1.type == RewardType.CHARACTER:
-            self.ground_character_mod(self.reward1.id)
-        elif self.reward1.type == RewardType.ESPER:
-            self.ground_esper_mod(self.reward1.id)
+        # if not location_gating1, give ground reward
+        if not self.args.location_gating1:
+            self.ground_reward_position_mod()
+            if self.reward1.type == RewardType.CHARACTER:
+                self.ground_character_mod(self.reward1.id)
+            elif self.reward1.type == RewardType.ESPER:
+                self.ground_esper_mod(self.reward1.id)
         self.finish_ground_check()
 
         self.save_point_hole_mod()
         self.airship_return_mod()
         self.atma_battle_mod()
 
-        if self.reward2.type == RewardType.ESPER:
-            self.atma_esper_mod(self.reward2.id)
-        elif self.reward2.type == RewardType.ITEM:
-            self.atma_item_mod(self.reward2.id)
+        # if not location_gating1, give Atma reward
+        if not self.args.location_gating1:
+            if self.reward2.type == RewardType.ESPER:
+                self.atma_esper_mod(self.reward2.id)
+            elif self.reward2.type == RewardType.ITEM:
+                self.atma_item_mod(self.reward2.id)
+        # else, location_gating1, give nothing
+        else:
+            self.atma_esper_item_mod(field.NOP())
 
         self.statues_scene_mod()
         self.timer_mod()
         self.nerapa_battle_mod()
 
-        if self.reward3.type == RewardType.CHARACTER:
-            self.escape_character_mod(self.reward3.id)
-        elif self.reward3.type == RewardType.ESPER:
-            self.escape_esper_mod(self.reward3.id)
+        # if not location_gating1, give Escape reward
+        if not self.args.location_gating1:
+            if self.reward3.type == RewardType.CHARACTER:
+                self.escape_character_mod(self.reward3.id)
+            elif self.reward3.type == RewardType.ESPER:
+                self.escape_esper_mod(self.reward3.id)
+        # else, location_gating1, use item mod, but give nothing
+        else:
+            self.escape_item_mod(self.reward3.id)
 
-        self.log_reward(self.reward1)
-        self.log_reward(self.reward2)
-        self.log_reward(self.reward3)
+        # if not location_gating1, don't log rewards
+        if not self.args.location_gating1:
+            self.log_reward(self.reward1)
+            self.log_reward(self.reward2)
+            self.log_reward(self.reward3)
 
     def shadow_leaves_mod(self):
         # remove shadow from party at floating continent (if return to airship or after atma)
@@ -484,3 +504,35 @@ class FloatingContinent(Event):
             field.AddEsper(esper),
             field.Dialog(self.espers.get_receive_esper_dialog(esper)),
         ])
+
+    # routine to reward an item upon FC Escape complete
+    def escape_item_mod(self, item):
+        # use guest character to give item reward
+        guest_char_id = 0x0f
+        guest_char = self.maps.get_npc(0x189, guest_char_id)
+
+        random_sprite = self.characters.get_random_esper_item_sprite()
+        random_sprite_palette = self.characters.get_palette(random_sprite)
+
+        space = Reserve(0xa579d, 0xa57b2, "floating continent wait dialogs", field.NOP())
+        space.write(
+            field.SetSprite(guest_char_id, random_sprite),
+            field.SetPalette(guest_char_id, random_sprite_palette),
+            field.RefreshEntities(),
+        )
+        # if location_gating1, do not add item to inventory
+        if self.args.location_gating1:
+            self.escape_mod(guest_char_id, [
+                field.DeleteEntity(guest_char_id),
+                field.RefreshEntities(),
+                field.LoadMap(0x06, direction.DOWN, default_music = True, x = 16, y = 6, fade_in = True, entrance_event = True),
+            ])
+        # else, add item to inventory & show dialog
+        else:
+            self.escape_mod(guest_char_id, [
+                field.DeleteEntity(guest_char_id),
+                field.RefreshEntities(),
+                field.LoadMap(0x06, direction.DOWN, default_music = True, x = 16, y = 6, fade_in = True, entrance_event = True),
+                field.AddItem(item),
+                field.Dialog(self.items.get_receive_dialog(item)),
+            ])

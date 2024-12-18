@@ -8,7 +8,11 @@ class VeldtCaveWOR(Event):
         return self.characters.SHADOW
 
     def init_rewards(self):
-        self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
+        # if location gating mode, reward is esper/item
+        if self.args.location_gating1:
+            self.reward = self.add_reward(RewardType.ESPER | RewardType.ITEM)
+        else:
+            self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
 
     def mod(self):
         self.shadow_npc_id = 0x12

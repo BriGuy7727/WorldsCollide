@@ -8,7 +8,11 @@ class UmaroCave(Event):
         return self.characters.UMARO
 
     def init_rewards(self):
-        self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
+        # if location gating mode, reward is character/esper
+        if self.args.location_gating1:
+            self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER)
+        else:
+            self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
 
     def mod(self):
         space = Reserve(0xcd6f5, 0xcd6f7, "umaro cave what's with this carving", field.NOP())

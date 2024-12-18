@@ -8,7 +8,11 @@ class NarsheBattle(Event):
         return 2
 
     def init_rewards(self):
-        self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
+        # if location gating mode, reward is "item" but never given
+        if self.args.location_gating1:
+            self.reward = self.add_reward(RewardType.ITEM)
+        else:
+            self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
 
     def init_event_bits(self, space):
         space.write(
@@ -30,15 +34,22 @@ class NarsheBattle(Event):
         self.banon_npc_mod()
         self.start_battle_mod()
         self.kefka_battle_mod()
+        
+        # if not location gating, give normal rewards
+        if not self.args.location_gating1:
+            if self.reward.type == RewardType.CHARACTER:
+                self.character_mod(self.reward.id)
+            elif self.reward.type == RewardType.ESPER:
+                self.esper_mod(self.reward.id)
+            elif self.reward.type == RewardType.ITEM:
+                self.item_mod(self.reward.id)
+        # else location gated, give nothing
+        else:
+            self.esper_item_mod(field.NOP())
 
-        if self.reward.type == RewardType.CHARACTER:
-            self.character_mod(self.reward.id)
-        elif self.reward.type == RewardType.ESPER:
-            self.esper_mod(self.reward.id)
-        elif self.reward.type == RewardType.ITEM:
-            self.item_mod(self.reward.id)
-
-        self.log_reward(self.reward)
+        # if not location_gating1, don't log reward
+        if not self.args.location_gating1:
+            self.log_reward(self.reward)
 
     def snowfield_save_point_mod(self):
         space = Reserve(0xcc591, 0xcc5fe, "narshe wob kefka battlefield save point character reset", field.NOP())

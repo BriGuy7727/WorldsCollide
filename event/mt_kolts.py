@@ -8,7 +8,11 @@ class MtKolts(Event):
         return self.characters.SABIN
 
     def init_rewards(self):
-        self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
+        # if location gating mode, reward is character/esper
+        if self.args.location_gating1:
+            self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER)
+        else:
+            self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
 
     def mod(self):
         self.vargas_npc_id = 0x10

@@ -8,7 +8,7 @@ class FigaroCastleWOB(Event):
         return self.characters.EDGAR
 
     def init_rewards(self):
-        if self.args.no_free_characters_espers:
+        if self.args.no_free_characters_espers or self.args.location_gating1:
             self.reward = self.add_reward(RewardType.ITEM)
         else:
             self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
@@ -26,6 +26,17 @@ class FigaroCastleWOB(Event):
 
         if self.args.character_gating:
             self.add_gating_condition()
+        # add condition to hide edgar NPC if location_gating mode and in WOR bit clear (copied from add_gating_condition with different event bit check)
+        elif self.args.location_gating1:
+            src = [
+                field.ReturnIfEventBitSet(event_bit.IN_WOR),
+                field.HideEntity(self.edgar_npc_id),
+                field.Return(),
+            ]
+            space = Write(Bank.CA, src, "figaro castle wob location gate")
+            entrance_event2 = space.start_address
+            self.maps.set_entrance_event(0x03a, entrance_event2 - EVENT_CODE_START)
+
 
         self.guard_mod()
         if self.reward.type == RewardType.CHARACTER:

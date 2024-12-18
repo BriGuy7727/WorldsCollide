@@ -13,6 +13,9 @@ class Kohlingen(Event):
     def init_rewards(self):
         if self.args.no_free_characters_espers:
             self.reward = self.add_reward(RewardType.ITEM)
+        # if location gating mode, reward is esper/item
+        elif self.args.location_gating1:
+            self.reward = self.add_reward(RewardType.ESPER | RewardType.ITEM)
         else:
             self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
 
@@ -53,6 +56,13 @@ class Kohlingen(Event):
         if self.args.character_gating:
             space.write(
                 field.BranchIfEventBitSet(event_bit.character_recruited(self.character_gate()), "AFTER_HIDE_SHADOW"),
+                field.HideEntity(self.shadow_npc_id),
+                "AFTER_HIDE_SHADOW",
+            )
+        # if Location Gated, skip hiding reward if WOR bit is ON
+        elif self.args.location_gating1:
+            space.write(
+                field.BranchIfEventBitSet(event_bit.IN_WOR, "AFTER_HIDE_SHADOW"),
                 field.HideEntity(self.shadow_npc_id),
                 "AFTER_HIDE_SHADOW",
             )

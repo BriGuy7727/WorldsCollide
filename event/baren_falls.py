@@ -8,7 +8,11 @@ class BarenFalls(Event):
         return self.characters.SABIN
 
     def init_rewards(self):
-        self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
+        # if location gating mode, reward is esper/item
+        if self.args.location_gating1:
+            self.reward = self.add_reward(RewardType.ESPER | RewardType.ITEM)
+        else:
+            self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
 
     def mod(self):
         # delete row of events that trigger sabin/cyan dialog and shadow leaving (if in party)

@@ -10,6 +10,9 @@ class LoneWolf(Event):
     def init_rewards(self):
         if self.args.no_free_characters_espers:
             self.reward1 = self.add_reward(RewardType.ITEM)
+        # if location gating mode, reward is character/esper
+        elif self.args.location_gating1:
+            self.reward1 = self.add_reward(RewardType.ESPER | RewardType.ITEM)
         else:
             self.reward1 = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
         

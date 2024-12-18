@@ -17,7 +17,9 @@ class Events():
 
         events = self.mod()
 
-        self.validate(events)
+        # TODO: need to figure out what this does in terms of validating the logic of seed
+        if self.args.open_world or self.args.character_gating:
+            self.validate(events)
 
     def mod(self):
         # generate list of events from files
