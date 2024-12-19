@@ -34,7 +34,7 @@ def flags(args):
         flags += " -lg1"
     # location-gating mode #2
     elif args.location_gating2:
-        flags += " -lg1"
+        flags += " -lg2"
 
     if args.spoiler_log:
         flags += " -sl"
