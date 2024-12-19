@@ -59,6 +59,12 @@ class SouthFigaro(Event):
                 field.ReturnIfEventBitSet(event_bit.character_recruited(self.character_gate())),
                 field.HideEntity(self.celes_npc_id),
             )
+        # if location gating mode, only show Celes if WOR bit clear (in WOB)
+        elif self.args.location_gating1:
+            space.write(
+                field.ReturnIfEventBitClear(event_bit.IN_WOR),
+                field.HideEntity(self.celes_npc_id),
+            )
         space.write(
             field.Return(),
         )

@@ -31,7 +31,7 @@ class BurningHouse(Event):
         )
 
     def mod(self):
-        if self.args.character_gating:
+        if self.args.character_gating or self.args.location_gating1:
             self.add_gating_condition()
 
         self.enter_burning_house_mod()
@@ -62,9 +62,16 @@ class BurningHouse(Event):
 
         space = Reserve(0xbd73f, 0xbd746, "burning house inn stranger check", field.NOP())
         space.add_label("STRANGER_PRICE", 0xbd769),
-        space.write(
-            field.BranchIfEventBitClear(event_bit.character_recruited(self.character_gate()), "STRANGER_PRICE"),
-        )
+        # if location gating, stranger price in WOR
+        if self.args.location_gating1:
+            space.write(
+                field.BranchIfEventBitSet(event_bit.IN_WOR, "STRANGER_PRICE"),
+            )
+        # else character gate condition
+        else:
+            space.write(
+                field.BranchIfEventBitClear(event_bit.character_recruited(self.character_gate()), "STRANGER_PRICE"),
+            )
 
     def enter_burning_house_mod(self):
         # wake up in middle of night, enter burning house, skip scene with villagers outside burning house

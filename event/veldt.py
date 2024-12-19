@@ -226,6 +226,11 @@ class Veldt(Event):
             space.write(
                 branch_if_char_not_recruited(self.character_gate(), "SKIP_GAU_EVENT"),
             )
+        # if location gating, skip Veldt if in WOR
+        elif self.args.location_gating1:
+            space.write(
+                field.BranchIfEventBitSet(event_bit.IN_WOR, "SKIP_GAU_EVENT"),
+            )
         space.write(
             branch_if_char_not_recruited(self.leap_char, "CHAR_RECRUITED_CHECK"),
             branch_if_char_available(self.leap_char, "CHAR_RECRUITED_CHECK"),

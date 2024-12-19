@@ -21,6 +21,8 @@ class Checks(scroll_area.ScrollArea):
 
         if args.character_gating:
             self.character_gating_init()
+        elif args.location_gating1:
+            self.location_gating_init()
         else:
             self.open_world_init()
 
@@ -84,6 +86,29 @@ class Checks(scroll_area.ScrollArea):
 
             self.lines.append(scroll_area.Line("", f0.set_user_text_color))
             self.line_skip_bits.append((character_address, character_bit))
+
+        del self.lines[-1]
+        del self.line_skip_bits[-1]
+
+    def location_gating_init(self):
+        from constants.location_gates import location_gates
+
+        self.lines = []
+        self.line_skip_bits = []
+        for location, checks in location_gates.items():
+            self.lines.append(scroll_area.Line(location, f0.set_blue_text_color))
+            self.line_skip_bits.append((constant_ffff, 0x01))   # never skip
+
+            for check in checks:
+                check_address = event_bit.address(self.check_bits[check])
+                check_bit = event_bit.bit(self.check_bits[check])
+                color_function = self.line_color_function(check_address, check_bit)
+
+                self.lines.append(scroll_area.Line("  " + check, color_function))
+                self.line_skip_bits.append((constant_ffff, 0x01))   # never skip
+
+            self.lines.append(scroll_area.Line("", f0.set_user_text_color))
+            self.line_skip_bits.append((constant_ffff, 0x01))   # never skip
 
         del self.lines[-1]
         del self.line_skip_bits[-1]
