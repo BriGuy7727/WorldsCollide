@@ -42,7 +42,7 @@ class Events():
                 name_event[event.name()] = event
 
         # select event rewards
-        if self.args.character_gating:
+        if self.args.character_gating or self.args.location_gating1:
             self.character_gating_mod(events, name_event)
         else:
             self.open_world_mod(events)
@@ -117,7 +117,12 @@ class Events():
             unlocked_slot_iterations = []
             for slot in character_slots:
                 slot_empty = slot.id is None
-                gate_char_available = (slot.event.character_gate() in characters_available or slot.event.character_gate() is None)
+                # if character gated, make sure to take gating into consideration
+                if self.args.character_gating:
+                    gate_char_available = (slot.event.character_gate() in characters_available or slot.event.character_gate() is None)
+                # else location gating, this slot is available b/c there's no character gate
+                else:
+                    gate_char_available = True
                 enough_chars_available = len(characters_available) >= slot.event.characters_required()
                 if slot_empty and gate_char_available and enough_chars_available:
                     if slot in slot_iterations:
