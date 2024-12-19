@@ -36,9 +36,9 @@ class FloatingContinent(Event):
         self.ground_shadow_npc_id = 0x1b
         self.ground_shadow_npc = self.maps.get_npc(0x18a, self.ground_shadow_npc_id)
 
+        self.ground_reward_position_mod()
         # if not location_gating1, give ground reward
         if not self.args.location_gating1:
-            self.ground_reward_position_mod()
             if self.reward1.type == RewardType.CHARACTER:
                 self.ground_character_mod(self.reward1.id)
             elif self.reward1.type == RewardType.ESPER:
@@ -185,8 +185,14 @@ class FloatingContinent(Event):
         )
 
     def ground_reward_position_mod(self):
-        self.ground_shadow_npc.x = 11
-        self.ground_shadow_npc.y = 13
+        # if location gating, move NPC way off screen
+        if self.args.location_gating1:
+            self.ground_shadow_npc.x = 0
+            self.ground_shadow_npc.y = 63
+        # else not location gated, use NPC at Arrive
+        else:
+            self.ground_shadow_npc.x = 11
+            self.ground_shadow_npc.y = 13
 
         space = Reserve(0xad9a7, 0xad9aa, "floating continent move party above shadow", field.NOP())
 
@@ -510,9 +516,14 @@ class FloatingContinent(Event):
         # use guest character to give item reward
         guest_char_id = 0x0f
         guest_char = self.maps.get_npc(0x189, guest_char_id)
-
-        random_sprite = self.characters.get_random_esper_item_sprite()
-        random_sprite_palette = self.characters.get_palette(random_sprite)
+        # if location gating, use Leo sprite
+        if self.args.location_gating1:
+            random_sprite = 16
+            random_sprite_palette = 0
+        # else use random esper/item sprite
+        else:
+            random_sprite = self.characters.get_random_esper_item_sprite()
+            random_sprite_palette = self.characters.get_palette(random_sprite)
 
         space = Reserve(0xa579d, 0xa57b2, "floating continent wait dialogs", field.NOP())
         space.write(

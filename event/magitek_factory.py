@@ -348,8 +348,14 @@ class MagitekFactory(Event):
 
     # Magitek Factory Finish item code
     def item_mod(self, item):
-        self.setzer_npc.sprite = self.characters.get_random_esper_item_sprite()
-        self.setzer_npc.palette = self.characters.get_palette(self.setzer_npc.sprite)
+        # if location gating, use Kefka sprite to run at party
+        if self.args.location_gating1:
+            self.setzer_npc.sprite = 21
+            self.setzer_npc.palette = 3
+        # else use the esper/item NPC sprite
+        else:
+            self.setzer_npc.sprite = self.characters.get_random_esper_item_sprite()
+            self.setzer_npc.palette = self.characters.get_palette(self.setzer_npc.sprite)
 
         space = Reserve(0xc819b, 0xc8302, "magitek factory add char and kefka cranes scene", field.NOP())
         # if not location gated, add item to inventory
