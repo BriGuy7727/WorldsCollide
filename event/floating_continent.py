@@ -43,9 +43,9 @@ class FloatingContinent(Event):
                 self.ground_character_mod(self.reward1.id)
             elif self.reward1.type == RewardType.ESPER:
                 self.ground_esper_mod(self.reward1.id)
-        # else location_gating1, use ground Leo mod
+        # else location_gating1, use ground Kefka mod
         else:
-            self.ground_leo_mod()
+            self.ground_kefka_mod()
         self.finish_ground_check()
 
         self.save_point_hole_mod()
@@ -72,9 +72,9 @@ class FloatingContinent(Event):
                 self.escape_character_mod(self.reward3.id)
             elif self.reward3.type == RewardType.ESPER:
                 self.escape_esper_mod(self.reward3.id)
-        # else, location_gating1, use Leo mod
+        # else, location_gating1, use Kefka mod
         else:
-            self.escape_leo_mod()
+            self.escape_kefka_mod()
 
         # if not location_gating1, don't log rewards
         if not self.args.location_gating1:
@@ -249,22 +249,22 @@ class FloatingContinent(Event):
             field.Branch(space.end_address + 1),
         )
 
-    # when location_gating1, FC Arrive is Leo animated
-    def ground_leo_mod(self):
-        # use Leo's sprite
-        self.ground_shadow_npc.sprite = 16
-        self.ground_shadow_npc.palette = 0
+    # when location_gating1, FC Arrive is Kefka animated
+    def ground_kefka_mod(self):
+        # use Kefka's sprite
+        self.ground_shadow_npc.sprite = 21
+        self.ground_shadow_npc.palette = 3
         self.ground_shadow_npc.direction = direction.UP
-        # Animate Leo NPC when intereacted with
+        # Animate Kefka NPC when intereacted with
         space = Reserve(0xad9b1, 0xad9ed, "floating continent add item on ground", field.NOP())
         space.write(
             field.EntityAct(self.ground_shadow_npc_id, True,
                 field_entity.AnimateStandingHeadDown(),
-                field_entity.Pause(1),
+                field_entity.Pause(2),
                 field_entity.AnimateSurprised(),
-                field_entity.Pause(4),
+                field_entity.Pause(8),
                 field_entity.AnimateFrontHandsUp(),
-                field_entity.Pause(1),
+                field_entity.Pause(2),
                 field_entity.SetSpeed(field_entity.Speed.NORMAL),
                 field_entity.DisableWalkingAnimation(),
                 field_entity.Move(direction.UP, 8),
@@ -572,12 +572,12 @@ class FloatingContinent(Event):
         ])
 
     # routine for location_gating1 FC Escape
-    def escape_leo_mod(self):
+    def escape_kefka_mod(self):
         guest_char_id = 0x0f
         guest_char = self.maps.get_npc(0x189, guest_char_id)
-        # use Leo sprite
-        random_sprite = 16
-        random_sprite_palette = 0
+        # use Kefka sprite
+        random_sprite = 21
+        random_sprite_palette = 3
 
         space = Reserve(0xa579d, 0xa57b2, "floating continent wait dialogs", field.NOP())
         space.write(
