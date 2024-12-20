@@ -43,9 +43,9 @@ class FloatingContinent(Event):
                 self.ground_character_mod(self.reward1.id)
             elif self.reward1.type == RewardType.ESPER:
                 self.ground_esper_mod(self.reward1.id)
-        # else location_gating1, use item reward mod but don't give anything
+        # else location_gating1, use ground Leo mod
         else:
-            self.ground_item_mod(self.reward1.id)
+            self.ground_leo_mod()
         self.finish_ground_check()
 
         self.save_point_hole_mod()
@@ -72,9 +72,9 @@ class FloatingContinent(Event):
                 self.escape_character_mod(self.reward3.id)
             elif self.reward3.type == RewardType.ESPER:
                 self.escape_esper_mod(self.reward3.id)
-        # else, location_gating1, use item mod, but give nothing
+        # else, location_gating1, use Leo mod
         else:
-            self.escape_item_mod(self.reward3.id)
+            self.escape_leo_mod()
 
         # if not location_gating1, don't log rewards
         if not self.args.location_gating1:
@@ -235,32 +235,43 @@ class FloatingContinent(Event):
 
     # when reward1 is an item
     def ground_item_mod(self, item):
-        # if no location_gating1, give item
-        if not self.args.location_gating1:
-            # use sparkle as NPC for item
-            self.ground_shadow_npc.sprite = 106
-            self.ground_shadow_npc.palette = 6
-            self.ground_shadow_npc.split_sprite = 1
-            self.ground_shadow_npc.direction = direction.DOWN
+        # use sparkle as NPC for item
+        self.ground_shadow_npc.sprite = 106
+        self.ground_shadow_npc.palette = 6
+        self.ground_shadow_npc.split_sprite = 1
+        self.ground_shadow_npc.direction = direction.DOWN
 
-            space = Reserve(0xad9b1, 0xad9ed, "floating continent add item on ground", field.NOP())
-            space.write(
-                field.AddItem(item),
-                field.Dialog(self.items.get_receive_dialog(item)),
-                field.DeleteEntity(self.ground_shadow_npc_id),
-                field.Branch(space.end_address + 1),
-            )
-        # else location_gating1, update ground sprite to Leo & don't give item
-        else:
-            self.ground_shadow_npc.sprite = 16
-            self.ground_shadow_npc.palette = 0
-            self.ground_shadow_npc.direction = direction.UP
+        space = Reserve(0xad9b1, 0xad9ed, "floating continent add item on ground", field.NOP())
+        space.write(
+            field.AddItem(item),
+            field.Dialog(self.items.get_receive_dialog(item)),
+            field.DeleteEntity(self.ground_shadow_npc_id),
+            field.Branch(space.end_address + 1),
+        )
 
-            space = Reserve(0xad9b1, 0xad9ed, "floating continent add item on ground", field.NOP())
-            space.write(
-                field.DeleteEntity(self.ground_shadow_npc_id),
-                field.Branch(space.end_address + 1),
-            )
+    # when location_gating1, FC Arrive is Leo animated
+    def ground_leo_mod(self):
+        # use Leo's sprite
+        self.ground_shadow_npc.sprite = 16
+        self.ground_shadow_npc.palette = 0
+        self.ground_shadow_npc.direction = direction.UP
+        # Animate Leo NPC when intereacted with
+        space = Reserve(0xad9b1, 0xad9ed, "floating continent add item on ground", field.NOP())
+        space.write(
+            field.EntityAct(self.ground_shadow_npc_id, True,
+                field_entity.AnimateStandingHeadDown(),
+                field_entity.Pause(1),
+                field_entity.AnimateSurprised(),
+                field_entity.Pause(4),
+                field_entity.AnimateFrontHandsUp(),
+                field_entity.Pause(1),
+                field_entity.SetSpeed(field_entity.Speed.NORMAL),
+                field_entity.DisableWalkingAnimation(),
+                field_entity.Move(direction.UP, 8),
+            ),
+            field.DeleteEntity(self.ground_shadow_npc_id),
+            field.Branch(space.end_address + 1),
+        )
 
     def finish_ground_check(self):
         src = [
@@ -542,14 +553,8 @@ class FloatingContinent(Event):
         # use guest character to give item reward
         guest_char_id = 0x0f
         guest_char = self.maps.get_npc(0x189, guest_char_id)
-        # if location gating, use Leo sprite
-        if self.args.location_gating1:
-            random_sprite = 16
-            random_sprite_palette = 0
-        # else use random esper/item sprite
-        else:
-            random_sprite = self.characters.get_random_esper_item_sprite()
-            random_sprite_palette = self.characters.get_palette(random_sprite)
+        random_sprite = self.characters.get_random_esper_item_sprite()
+        random_sprite_palette = self.characters.get_palette(random_sprite)
 
         space = Reserve(0xa579d, 0xa57b2, "floating continent wait dialogs", field.NOP())
         space.write(
@@ -557,19 +562,33 @@ class FloatingContinent(Event):
             field.SetPalette(guest_char_id, random_sprite_palette),
             field.RefreshEntities(),
         )
-        # if location_gating1, do not add item to inventory
-        if self.args.location_gating1:
-            self.escape_mod(guest_char_id, [
-                field.DeleteEntity(guest_char_id),
-                field.RefreshEntities(),
-                field.LoadMap(0x06, direction.DOWN, default_music = True, x = 16, y = 6, fade_in = True, entrance_event = True),
-            ])
-        # else, add item to inventory & show dialog
-        else:
-            self.escape_mod(guest_char_id, [
-                field.DeleteEntity(guest_char_id),
-                field.RefreshEntities(),
-                field.LoadMap(0x06, direction.DOWN, default_music = True, x = 16, y = 6, fade_in = True, entrance_event = True),
-                field.AddItem(item),
-                field.Dialog(self.items.get_receive_dialog(item)),
-            ])
+        # add item to inventory & show dialog
+        self.escape_mod(guest_char_id, [
+            field.DeleteEntity(guest_char_id),
+            field.RefreshEntities(),
+            field.LoadMap(0x06, direction.DOWN, default_music = True, x = 16, y = 6, fade_in = True, entrance_event = True),
+            field.AddItem(item),
+            field.Dialog(self.items.get_receive_dialog(item)),
+        ])
+
+    # routine for location_gating1 FC Escape
+    def escape_leo_mod(self):
+        guest_char_id = 0x0f
+        guest_char = self.maps.get_npc(0x189, guest_char_id)
+        # use Leo sprite
+        random_sprite = 16
+        random_sprite_palette = 0
+
+        space = Reserve(0xa579d, 0xa57b2, "floating continent wait dialogs", field.NOP())
+        space.write(
+            field.SetSprite(guest_char_id, random_sprite),
+            field.SetPalette(guest_char_id, random_sprite_palette),
+            field.RefreshEntities(),
+        )
+
+        # call escape mod, but don't add anything to inventory
+        self.escape_mod(guest_char_id, [
+            field.DeleteEntity(guest_char_id),
+            field.RefreshEntities(),
+            field.LoadMap(0x06, direction.DOWN, default_music = True, x = 16, y = 6, fade_in = True, entrance_event = True),
+        ])
