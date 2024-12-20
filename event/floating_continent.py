@@ -43,6 +43,9 @@ class FloatingContinent(Event):
                 self.ground_character_mod(self.reward1.id)
             elif self.reward1.type == RewardType.ESPER:
                 self.ground_esper_mod(self.reward1.id)
+        # else location_gating1, use item reward mod but don't give anything
+        else:
+            self.ground_item_mod(self.reward1.id)
         self.finish_ground_check()
 
         self.save_point_hole_mod()
@@ -185,14 +188,8 @@ class FloatingContinent(Event):
         )
 
     def ground_reward_position_mod(self):
-        # if location gating, move NPC way off screen
-        if self.args.location_gating1:
-            self.ground_shadow_npc.x = 0
-            self.ground_shadow_npc.y = 63
-        # else not location gated, use NPC at Arrive
-        else:
-            self.ground_shadow_npc.x = 11
-            self.ground_shadow_npc.y = 13
+        self.ground_shadow_npc.x = 11
+        self.ground_shadow_npc.y = 13
 
         space = Reserve(0xad9a7, 0xad9aa, "floating continent move party above shadow", field.NOP())
 
@@ -235,6 +232,35 @@ class FloatingContinent(Event):
             field.DeleteEntity(self.ground_shadow_npc_id),
             field.Branch(space.end_address + 1),
         )
+
+    # when reward1 is an item
+    def ground_item_mod(self, item):
+        # if no location_gating1, give item
+        if not self.args.location_gating1:
+            # use sparkle as NPC for item
+            self.ground_shadow_npc.sprite = 106
+            self.ground_shadow_npc.palette = 6
+            self.ground_shadow_npc.split_sprite = 1
+            self.ground_shadow_npc.direction = direction.DOWN
+
+            space = Reserve(0xad9b1, 0xad9ed, "floating continent add item on ground", field.NOP())
+            space.write(
+                field.AddItem(item),
+                field.Dialog(self.items.get_receive_dialog(item)),
+                field.DeleteEntity(self.ground_shadow_npc_id),
+                field.Branch(space.end_address + 1),
+            )
+        # else location_gating1, update ground sprite to Leo & don't give item
+        else:
+            self.ground_shadow_npc.sprite = 16
+            self.ground_shadow_npc.palette = 0
+            self.ground_shadow_npc.direction = direction.UP
+
+            space = Reserve(0xad9b1, 0xad9ed, "floating continent add item on ground", field.NOP())
+            space.write(
+                field.DeleteEntity(self.ground_shadow_npc_id),
+                field.Branch(space.end_address + 1),
+            )
 
     def finish_ground_check(self):
         src = [
