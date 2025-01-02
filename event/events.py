@@ -44,6 +44,8 @@ class Events():
         # select event rewards
         if self.args.character_gating or self.args.location_gating1:
             self.character_gating_mod(events, name_event)
+        elif self.args.location_gating2:
+            self.location_gating2_mod(events, name_event)
         else:
             self.open_world_mod(events)
 
@@ -172,6 +174,54 @@ class Events():
 
         # choose the rest of the rewards, items given to events after all characters/events assigned
         self.choose_item_possible_rewards(reward_slots)
+
+    # location gating 2 reward selector
+    # characters can only be at their own checks, so use the character gates to determine where a character can be placed
+    def location_gating2_mod(self, events, name_event):
+        import random
+        # initialize the reward slots
+        reward_slots = self.init_reward_slots(events)
+        # for every event with only one reward type possible, assign random rewards
+        # note: this includes start, which can get up to 4 characters
+        self.choose_single_possible_type_rewards(reward_slots)
+        # find characters that were assigned to start
+        unavailable_chars = [reward.id for reward in name_event["Start"].rewards]
+        # find all the rewards that can be a character and add to character_slots list (besides Narshe Battle & Start)
+        character_slots = []
+        for event in events:
+            for reward in event.rewards:
+                # if it's Narshe WOB or Start, don't add to possible slots
+                if event.name() == "Narshe Battle" or event.name() == "Start":
+                    continue
+                # if there's a character as a possible reward, add this slot to list
+                if reward.possible_types & RewardType.CHARACTER:
+                    character_slots.append(reward)
+        # shuffle the list so they're not in alphabetical order
+        random.shuffle(character_slots)
+        # loop over all of the character slots
+        for slot in character_slots:
+            # if the slot's gated character is not in the unavailable list, pick that character for this slot
+            # we'll also be adding it to the unavailable_chars list so they won't be picked again 
+            if slot.event.character_gate() not in unavailable_chars:
+                #print(slot.event.name())
+                # set this character to be unavailable for future rewards
+                self.characters.set_unavailable(slot.event.character_gate())
+                # fill slot with character ID
+                slot.id = slot.event.character_gate()
+                # indicate this slot is a character reward
+                slot.type = RewardType.CHARACTER
+                # add to unavailable_chars list
+                unavailable_chars.append(slot.event.character_gate())
+        # by now, all of the characters have been placed, so now place all of the espers/items in the rest of the slots
+        # get all reward slots still available
+        reward_slots = [reward for event in events for reward in event.rewards if reward.id is None]
+        # for every event with only char/esper rewards possible, assign random espers
+        self.choose_char_esper_possible_rewards(reward_slots)
+        # get a new list of reward slots after placing espers
+        reward_slots = [slot for slot in reward_slots if slot.id is None]
+        # assign rest of rewards where item is possible
+        self.choose_item_possible_rewards(reward_slots)
+        return
 
     def validate(self, events):
         char_esper_checks = []

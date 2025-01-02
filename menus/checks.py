@@ -19,7 +19,7 @@ class Checks(scroll_area.ScrollArea):
         for name_bit in condition_bits.check_bit:
             self.check_bits[name_bit.name] = name_bit.bit
 
-        if args.character_gating:
+        if args.character_gating or args.location_gating2:
             self.character_gating_init()
         elif args.location_gating1:
             self.location_gating_init()
@@ -74,7 +74,11 @@ class Checks(scroll_area.ScrollArea):
                 character_bit = event_bit.bit(character_event_bit)
 
             self.lines.append(scroll_area.Line(character, f0.set_blue_text_color))
-            self.line_skip_bits.append((character_address, character_bit))
+            # if location gating 2, don't skip the character lines
+            if args.location_gating2:
+                self.line_skip_bits.append((constant_ffff, 0x01))   # never skip
+            else:
+                self.line_skip_bits.append((character_address, character_bit))
 
             for check in checks:
                 check_address = event_bit.address(self.check_bits[check])
@@ -82,10 +86,18 @@ class Checks(scroll_area.ScrollArea):
                 color_function = self.line_color_function(check_address, check_bit)
 
                 self.lines.append(scroll_area.Line("  " + check, color_function))
-                self.line_skip_bits.append((character_address, character_bit))
+                # if location gating 2, don't skip the check lines
+                if args.location_gating2:
+                    self.line_skip_bits.append((constant_ffff, 0x01))   # never skip
+                else:
+                    self.line_skip_bits.append((character_address, character_bit))
 
             self.lines.append(scroll_area.Line("", f0.set_user_text_color))
-            self.line_skip_bits.append((character_address, character_bit))
+            # if location gating 2, don't skip the end lines
+            if args.location_gating2:
+                self.line_skip_bits.append((constant_ffff, 0x01))   # never skip
+            else:
+                self.line_skip_bits.append((character_address, character_bit))
 
         del self.lines[-1]
         del self.line_skip_bits[-1]
