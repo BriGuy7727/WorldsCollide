@@ -19,8 +19,10 @@ class Checks(scroll_area.ScrollArea):
         for name_bit in condition_bits.check_bit:
             self.check_bits[name_bit.name] = name_bit.bit
 
+        # if character gated or location gating 2, print checks by character
         if args.character_gating or args.location_gating2:
             self.character_gating_init()
+        # if location gating 1, print checks by reward type
         elif args.location_gating1:
             self.location_gating_init()
         else:
