@@ -47,10 +47,10 @@ def options(args):
         game_mode = "Character Gating"
     # location-gating mode #1
     elif args.location_gating1:
-        game_mode = "Location Gating 1"
+        game_mode = "Location Gating"
     # location-gating mode #2
     elif args.location_gating2:
-        game_mode = "Location Gating 2"
+        game_mode = "Search For Friends"
 
     return [
         ("Mode", game_mode, "game_mode"),
