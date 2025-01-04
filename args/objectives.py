@@ -35,6 +35,11 @@ def process(args):
             self.conditions_required_min = conditions_required_min
             self.conditions_required_max = conditions_required_max
 
+    world_access_results = []
+    from constants.objectives.results import category_types as category_types
+    # build a list of all objective results in the World Access category type for detecting softlocks
+    for result_name in category_types["World Access"]:
+        world_access_results.append(result_name.name)
     args.objectives = []
     args.final_kefka_objective = False
     for oi in range(MAX_OBJECTIVES):
@@ -96,6 +101,87 @@ def process(args):
                         args.parser.print_usage()
                         print(f"{sys.argv[0]}: error: {condition_type.name}: invalid argument {arg}")
                         sys.exit(1)
+                # code to prevent softlocks or unbeatable seeds with WOR/WOB access objectives
+                # check if result name is WOR/WOB Access
+                if result.name in world_access_results:
+                    from constants.objectives.conditions import world_access_acceptable_conditions 
+                    from constants.objectives.conditions import wor_access_acceptable_check_conditions
+                    from constants.objectives.conditions import wor_access_acceptable_quest_conditions
+                    from constants.objectives.conditions import wob_access_acceptable_check_conditions
+                    from constants.objectives.conditions import wob_access_acceptable_quest_conditions
+                    from constants.objectives.conditions import check_bit, quest_bit
+                    # World of Ruin and World of Balance Access objective results MUST not contain any of the following Conditions:
+                    # Random
+                    # Characters
+                    # Character
+                    # Espers
+                    # Esper
+                    # Dragons
+                    # Dragon
+                    # Bosses
+                    # Boss
+                    if condition_type.name not in world_access_acceptable_conditions:
+                        import sys
+                        print(f"Objective Error: {condition_type.name} condition not valid with {result.name}")
+                        sys.exit(1)
+                    # if condition type is Check
+                    elif condition_type.name == "Check":
+                        # get name of the check
+                        check_name = check_bit[condition_args[0]].name
+                        # if result is WOR Access, make sure the Check is in the list of acceptable WOR Access checks
+                        # ie: WOR Access cannot be a WOR check due to softlock
+                        if result.name == "World of Ruin Access" and check_name not in wor_access_acceptable_check_conditions:
+                            import sys
+                            print(f"Objective Error: Check {check_name} condition not valid with Result {result.name}")
+                            sys.exit(1)
+                        # if result is WOB Access, make sure the Check is in the list of acceptable WOB Access checks
+                        # ie: WOB Access cannot be a WOB check due to softlock
+                        elif result.name == "World of Balance Access" and check_name not in wob_access_acceptable_check_conditions:
+                            import sys
+                            print(f"Objective Error: Check {check_name} condition not valid with Result {result.name}")
+                            sys.exit(1)
+                    # if condition type is Quest
+                    elif condition_type.name == "Quest":
+                        # get name of the quest
+                        quest_name = quest_bit[condition_args[0]].name
+                        # if result is WOR Access, make sure the Quest is in the list of acceptable WOR Access quests
+                        # ie: WOR Access cannot be a WOR quest due to softlock (this includes Suplex a Train and Set Zozo Clock)
+                        if result.name == "World of Ruin Access" and quest_name not in wor_access_acceptable_quest_conditions:
+                            import sys
+                            print(f"Objective Error: Check {quest_name} condition not valid with Result {result.name}")
+                            sys.exit(1)
+                        # if result is WOB Access, make sure the Check is in the list of acceptable WOB Access quests
+                        # ie: WOB Access cannot be a WOB quest due to softlock (this includes Suplex a Train and Set Zozo Clock)
+                        elif result.name == "World of Balance Access" and quest_name not in wob_access_acceptable_quest_conditions:
+                            import sys
+                            print(f"Objective Error: Check {quest_name} condition not valid with Result {result.name}")
+                            sys.exit(1)
+                    # if condition type is Checks
+                    elif condition_type.name == "Checks":
+                        # get one end of range
+                        range1 = condition_args[0]
+                        # get other end of range
+                        range2 = condition_args[1]
+                        # if result is WOR Access, make sure the number of checks cannot be more than the count of total WOB checks
+                        if result.name == "World of Ruin Access":
+                            if range1 > len(wor_access_acceptable_check_conditions):
+                                import sys
+                                print(f"Objective Error: Checks {range1} condition not valid with Result {result.name}")
+                                sys.exit(1)
+                            elif range2 > len(wor_access_acceptable_check_conditions):
+                                import sys
+                                print(f"Objective Error: Checks {range2} condition not valid with Result {result.name}")
+                                sys.exit(1) 
+                        # if result is WOB Access, make sure the number of checks cannot be more than the count of total WOR checks
+                        elif result.name == "World of Balance Access":
+                            if range1 > len(wob_access_acceptable_check_conditions):
+                                import sys
+                                print(f"Objective Error: Checks {range1} condition not valid with Result {result.name}")
+                                sys.exit(1)
+                            elif range2 > len(wob_access_acceptable_check_conditions):
+                                import sys
+                                print(f"Objective Error: Checks {range2} condition not valid with Result {result.name}")
+                                sys.exit(1) 
 
                 condition = Condition(*condition_type, condition_args)
                 conditions.append(condition)

@@ -35,3 +35,104 @@ types = [
 name_type = {_type.name : _type for _type in types}
 
 names = list(name_type.keys())
+
+# list out the acceptable condition types for World Access objectives to prevent softlocks
+world_access_acceptable_conditions = [ 
+    "None", 
+    "Checks", 
+    "Check", 
+    "Quest" 
+]
+# list out the acceptable check conditions for World of Ruin Access objective to prevent softlocks
+wor_access_acceptable_check_conditions = [ 
+    "Baren Falls", 
+    "Burning House",
+    "Doma Siege",
+    "Esper Mountain", 
+    "Figaro Castle Throne",
+    "Floating Cont. Arrive",
+    "Floating Cont. Beast", 
+    "Floating Cont. Escape",
+    "Gau's Father's House",
+    "Imperial Camp", 
+    "Kohlingen Cafe", 
+    "Lete River",
+    "Lone Wolf Chase",
+    "Magitek Factory Trash", 
+    "Magitek Factory Guard",
+    "Magitek Factory Finish",
+    "Mt. Kolts",
+    "Narshe Battle", 
+    "Opera House Disruption",
+    "Phantom Train", 
+    "Sealed Gate", 
+    "Serpent Trench",
+    "South Figaro Prisoner", 
+    "South Figaro Cave",
+    "Tzen Thief", 
+    "Veldt", 
+    "Whelk Gate", 
+    "Zozo Tower", 
+    "Narshe Moogle Defense", 
+    "Auction 1", 
+    "Auction 2", 
+]
+# list out the acceptable quest conditions for World of Ruin Access objective to prevent softlocks
+wor_access_acceptable_quest_conditions = [ 
+    "Defeat Sealed Cave Ninja", 
+    "Help Injured Lad",
+    "Pass Security Checkpoint",
+    "Perform In Opera", 
+    "Win An Auction", 
+]
+# list out the acceptable check conditions for World of Balance Access objective to prevent softlocks
+wob_access_acceptable_check_conditions = [ 
+    "Ancient Castle", 
+    "Ancient Castle Dragon", 
+    "Burning House", 
+    "Collapsing House", 
+    "Daryl's Tomb", 
+    "Doma Dream Door", 
+    "Doma Dream Awaken", 
+    "Doma Dream Throne", 
+    "Ebot's Rock", 
+    "Fanatic's Tower Dragon",
+    "Fanatic's Tower Leader", 
+    "Fanatic's Tower Follower",
+    "Figaro Castle Throne", 
+    "Figaro Castle Engine",
+    "Kefka's Tower Cell Beast", 
+    "Kefka's Tower Dragon G",
+    "Kefka's Tower Dragon S",
+    "Kohlingen Cafe",
+    "Mobliz Attack",
+    "Mt. Zozo", 
+    "Mt. Zozo Dragon",
+    "Narshe Dragon", 
+    "Narshe Weapon Shop",
+    "Opera House Dragon", 
+    "Owzer's Mansion", 
+    "Phoenix Cave", 
+    "Phoenix Cave Dragon", 
+    "Search The Skies", 
+    "South Figaro Prisoner", 
+    "Tritoch Cliff", 
+    "Tzen Thief", 
+    "Umaro's Cave", 
+    "Veldt Cave", 
+    "Zone Eater",  
+    "Auction 1", 
+    "Auction 2", 
+]
+# list out the acceptable quest conditions for World of Balance Access objective to prevent softlocks
+wob_access_acceptable_quest_conditions = [ 
+    "Let Cid Die", 
+    "Save Cid",
+    "Win An Auction",
+    "Win A Coliseum Match", 
+    "Defeat KT Ambusher", 
+    "Defeat KT Robot", 
+    "Defeat KT Left Statue", 
+    "Defeat KT Mid Statue", 
+    "Defeat KT Right Statue", 
+]
