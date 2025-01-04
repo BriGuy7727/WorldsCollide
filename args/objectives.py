@@ -126,7 +126,12 @@ def process(args):
                         sys.exit(1)
                     # if condition type is Check
                     elif condition_type.name == "Check":
-                        # get name of the check
+                        # make sure the Check is not random
+                        if condition_args == 'r':
+                            import sys
+                            print(f"Objective Error: Random Check condition not valid with Result {result.name}")
+                            sys.exit(1)
+                        # get name of the check specified
                         check_name = check_bit[condition_args[0]].name
                         # if result is WOR Access, make sure the Check is in the list of acceptable WOR Access checks
                         # ie: WOR Access cannot be a WOR check due to softlock
@@ -142,6 +147,11 @@ def process(args):
                             sys.exit(1)
                     # if condition type is Quest
                     elif condition_type.name == "Quest":
+                        # ensure the Quest is not random
+                        if condition_args == 'r':
+                            import sys
+                            print(f"Objective Error: Random Quest condition not valid with Result {result.name}")
+                            sys.exit(1)
                         # get name of the quest
                         quest_name = quest_bit[condition_args[0]].name
                         # if result is WOR Access, make sure the Quest is in the list of acceptable WOR Access quests
