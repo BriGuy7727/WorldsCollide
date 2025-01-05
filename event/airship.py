@@ -34,6 +34,7 @@ class Airship(Event):
         self.dialogs.set_text(fly_wor_fc_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Ruin)<line><choice> (Floating Continent)<line><choice> (Not just yet)<end>')
         self.dialogs.set_text(fly_wor_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Ruin)<line><choice> (Not just yet)<end>')
         self.dialogs.set_text(fly_wob_dg_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Balance)<line><choice> (Search The Skies)<line><choice> (Not just yet)<end>')
+        self.dialogs.set_text(fly_wob_cancel_dialog, '<choice> (Lift-off)<line><choice> (World of Balance)<line><choice> (Not just yet)<end>')
         # new dialogues that do NOT include WOR or WOB choices for location gating
         self.dialogs.set_text(fly_fc_cancel_dialog, '<choice> (Lift-off)<line><choice> (Floating Continent)<line><choice> (Not just yet)<end>')
         self.dialogs.set_text(fly_dg_cancel_dialog, '<choice> (Lift-off)<line><choice> (Search the Skies)<line><choice> (Not just yet)<end>')
@@ -138,7 +139,7 @@ class Airship(Event):
                 field.Branch(fly_wob_cancel_choice),
             )
 
-        # airship controls branching
+        # airship wob controls branching
         space = Reserve(0xaf53a, 0xaf55d, "airship controls wor event bit check", field.NOP())
         space.write(
             field.BranchIfEventBitSet(event_bit.IN_WOR, wor_control_checks),
@@ -149,11 +150,11 @@ class Airship(Event):
             space.write(
                 field.BranchIfAll([event_bit.UNLOCKED_WOR, True, event_bit.FINISHED_FLOATING_CONTINENT, False], fly_wor_fc_cancel_choice),
             )
-            # Use Fly/DG/Cancel if WOR is locked and FC not finished
+            # Use Fly/FC/Cancel if WOR is locked and FC not finished
             space.write(
                 field.BranchIfAll([event_bit.UNLOCKED_WOR, False, event_bit.FINISHED_FLOATING_CONTINENT, False], fly_fc_cancel_choice),
             )
-            # Use Fly/WOB/Cancel if WOR is unlocked and FC is finished
+            # Use Fly/WOR/Cancel if WOR is unlocked and FC is finished
             space.write(
                 field.BranchIfAll([event_bit.UNLOCKED_WOR, True, event_bit.FINISHED_FLOATING_CONTINENT, True], fly_wor_cancel_choice),
             )
