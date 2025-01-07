@@ -8,9 +8,12 @@ class SealedGate(Event):
         return self.characters.TERRA
 
     def init_rewards(self):
-        # if NFP or location gating, give item
+        # if -nfce flag or Location Gating mode, item only reward
         if self.args.no_free_characters_espers or self.args.location_gating1:
             self.reward = self.add_reward(RewardType.ITEM)
+        # else if Search For Friends mode, esper/item reward only
+        elif self.args.location_gating2:
+            self.reward = self.add_reward(RewardType.ESPER | RewardType.ITEM)
         else:
             self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
 

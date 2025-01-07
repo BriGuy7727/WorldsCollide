@@ -185,7 +185,7 @@ DEFEATED_FANATICS_TOWER_DRAGON = 0x121 # custom
 # used in Location Gating modes
 UNLOCKED_WOR = 0x088 # custom
 UNLOCKED_WOB = 0x08a # custom
-
+UNLOCKED_IMP_BASE_TREASURE = 0x078
 # KT Battles
 DEFEATED_GUARDIAN = 0x0bc
 DEFEATED_INFERNO = 0x0bd
@@ -357,13 +357,13 @@ Bit RAM  Description
 058 8B:0 Discovered Ultros's note
 059 8B:1 Theater map reconfiguration 1
 05A 8B:2 Theater map reconfiguration 2
-05B 8B:3 Unused?
+05B 8B:3 Unused? -> FF6WC FINISHED_OPERA_DISRUPTION
 05C 8B:4 Setzer imprisoned Celes (needlessly affects the party change room)
 05D 8B:5 Celes tossed Edgar's coin (affects Setzer, Kohlingen, Narshe)
 05E 8B:6 Landed the airship near Albrook (affects the airship's exit door)
 05F 8B:7 Kefka disposed of Ifrit and Shiva
 060 8C:0 Fought Ifrit and Shiva
-061 8C:1 Unused?
+061 8C:1 Unused? -> FF6WC GOT_IFRIT_SHIVA
 062 8C:2 Puts the metal platform on the right in Kefka's Tower
 063 8C:3 Removes a barrier in Kefka's Tower 1
 064 8C:4 Removes a barrier in Kefka's Tower 2
@@ -383,10 +383,10 @@ Bit RAM  Description
 072 8E:2 Defeated Doom
 073 8E:3 Defeated Goddess
 074 8E:4 Defeated Poltrgeist
-075 8E:5 Unused?
+075 8E:5 Unused? -> FF6WC DEFEATED_NINJA_CAVE_TO_SEALED_GATE
 076 8E:6 Next stop, the sealed gate
 077 8E:7 Affects the airship's exit door (always remains clear?)
-078 8F:0 Unused?
+078 8F:0 Unused? -> FF6WC UNLOCKED_IMP_BASE_TREASURE
 079 8F:1 The Espers broke through the sealed gate (affects various locations)
 07A 8F:2 The Espers attacked the Blackjack
 07B 8F:3 The Espers attacked the Empire
@@ -427,11 +427,11 @@ Bit RAM  Description
 09E 93:6 The Floating Continent exists (affects overworld, Blackjack, Albrook)
 09F 93:7 Disables access to the Floating Continent (always remains clear?)
 0A0 94:0 Disables the IAF sequence
-0A1 94:1 Unused?
-0A2 94:2 Unused?
+0A1 94:1 Unused? -> FF6WC DEFEATED_ATMAWEAPON
+0A2 94:2 Unused? -> FF6WC DEFEATED_ATMA
 0A3 94:3 Left Shadow behind on the Floating Continent
 0A4 94:4 In the World of Ruin
-0A5 94:5 Unused?
+0A5 94:5 Unused? -> FF6WC FINISHED_FLOATING_CONTINENT
 0A6 94:6 Hides Party Character 0 on map 10 (always remains clear?)
 0A7 94:7 Met Crimson Robber 1
 0A8 95:0 Met Crimson Robber 2
@@ -447,11 +447,11 @@ Bit RAM  Description
 0B2 96:2 Examined Cid's dead body
 0B3 96:3 Cid recovered (enables access to the cliffs)
 0B4 96:4 Cid succumbed (enables access to the cliffs)
-0B5 96:5 Unused?
+0B5 96:5 Unused? -> FF6WC CHOSE_RAGNAROK_ESPER
 0B6 96:6 Got Ragnarok
-0B7 96:7 Unused?
+0B7 96:7 Unused? -> FF6WC GOT_BOTH_REWARDS_WEAPON_SHOP
 0B8 97:0 Got Cursed Shld
-0B9 97:1 Unused?
+0B9 97:1 Unused? -> FF6WC FINISHED_FEEDING_CID
 0BA 97:2 Recruited Strago in the World of Ruin
 0BB 97:3 Unused?
 0BC 97:4 Defeated Guardian

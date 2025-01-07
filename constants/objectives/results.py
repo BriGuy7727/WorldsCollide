@@ -86,6 +86,7 @@ category_types = {
     "World Access" : [
         ResultType(74, "World of Ruin Access", "World of Ruin Access", None),
         ResultType(75, "World of Balance Access", "World of Balance Access", None),
+        ResultType(76, "Imperial Base Treasure", "Imperial Base Treasure", None),
     ],
 }
 

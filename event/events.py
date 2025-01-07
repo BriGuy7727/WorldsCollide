@@ -186,13 +186,23 @@ class Events():
         self.choose_single_possible_type_rewards(reward_slots)
         # find characters that were assigned to start
         unavailable_chars = [reward.id for reward in name_event["Start"].rewards]
-        # find all the rewards that can be a character and add to character_slots list (besides Narshe Battle & Start)
+        # find all the rewards that can be a character and add to character_slots list (besides Start)
         character_slots = []
+        narshe_battle_character = None
         for event in events:
             for reward in event.rewards:
-                # if it's Narshe WOB or Start, don't add to possible slots
-                if event.name() == "Narshe Battle" or event.name() == "Start":
+                # if it's Start, don't add to possible slots
+                if event.name() == "Start":
                     continue
+                # if Narshe Battle, do special processing first before the algorithm to add non-starting characters
+                elif event.name() == "Narshe Battle":
+                    # give a 50/50 chance to reward a random available character (non-starting party)
+                    if random.randint(1,100) > 50:
+                        # get random available character
+                        narshe_battle_character = self.characters.get_random_available()
+                        # add this character to set of unavailable to reward
+                        unavailable_chars.append(narshe_battle_character)
+                        # the next line of code will append this slot to the next loop and we can special-case this
                 # if there's a character as a possible reward, add this slot to list
                 if reward.possible_types & RewardType.CHARACTER:
                     character_slots.append(reward)
@@ -200,10 +210,17 @@ class Events():
         random.shuffle(character_slots)
         # loop over all of the character slots
         for slot in character_slots:
-            # if the slot's gated character is not in the unavailable list, pick that character for this slot
+            # if the character gating for this slot is None, then it's the Narshe Battle
+            if slot.event.character_gate() is None:
+                # did we pick a character earlier? if so make sure this slot is updated
+                if narshe_battle_character is not None:
+                    # update the slot ID to be the character ID
+                    slot.id = narshe_battle_character
+                    # indicate a character is rewarded in this slot
+                    slot.type = RewardType.CHARACTER
+            # else if the slot's gated character is not in the unavailable list, pick that character for this slot
             # we'll also be adding it to the unavailable_chars list so they won't be picked again 
-            if slot.event.character_gate() not in unavailable_chars:
-                #print(slot.event.name())
+            elif slot.event.character_gate() not in unavailable_chars:
                 # set this character to be unavailable for future rewards
                 self.characters.set_unavailable(slot.event.character_gate())
                 # fill slot with character ID

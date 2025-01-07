@@ -13,8 +13,11 @@ class Kohlingen(Event):
     def init_rewards(self):
         if self.args.no_free_characters_espers:
             self.reward = self.add_reward(RewardType.ITEM)
-        # if location gating mode, reward is esper/item
+        # else if location gating mode, reward is esper/item
         elif self.args.location_gating1:
+            self.reward = self.add_reward(RewardType.ESPER | RewardType.ITEM)
+        # else if Search For Friends mode, esper/item reward only
+        elif self.args.location_gating2:
             self.reward = self.add_reward(RewardType.ESPER | RewardType.ITEM)
         else:
             self.reward = self.add_reward(RewardType.CHARACTER | RewardType.ESPER | RewardType.ITEM)
