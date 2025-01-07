@@ -26,7 +26,7 @@ class ImperialBase(Event):
         # if location_gating2, check to see if the Imperial Base Treasure objective has been met
         elif self.args.location_gating2:
             # Always clear the Treasure Room Door Locked NPC 
-            # If Unlocked Imperial Base Treasure bit is set (objective complete), return w/o setting the bit
+            # If Unlocked Imperial Base Treasure bit is set (objective complete), return w/o setting the door NPC bit
             # Otherwise set door NPC bit then return (objective is not complete)
             space.write(
                 field.ClearEventBit(npc_bit.TREASURE_ROOM_DOOR_IMPERIAL_BASE),
