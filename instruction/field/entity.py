@@ -108,6 +108,14 @@ class AnimateHighJump(_Instruction):
     def __init__(self):
         super().__init__(0xdd)
 
+class AnimateFingerUp(_Instruction):
+    def __init__(self):
+        super().__init__(0x24)
+
+class AnimateFingerWag(_Instruction):
+    def __init__(self):
+        super().__init__(0x25)
+
 class _BranchDistance(_Instruction):
     def __init__(self, opcode, distance, offset):
         self.distance = distance
