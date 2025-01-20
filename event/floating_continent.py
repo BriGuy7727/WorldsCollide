@@ -389,82 +389,90 @@ class FloatingContinent(Event):
             ),
         )
         space = Reserve(0xade00, 0xade0b, "floating continent gauntlet branch code", field.NOP())
+        # if location gating 2, then branch to the boss gauntlet code
         if self.args.location_gating2:
             space.write(
                 # branch to boss Gauntlet code
                 field.Branch(0xadd43),
             )
-
-        # Gauntlet bosses
-        boss_slots = [
-            name_pack["Doom"],
-            name_pack["Goddess"],
-            name_pack["Poltrgeist"],
-        ]
-        # shuffle their order
-        import random
-        random.shuffle(boss_slots)
+        # else, write a no-op
+        else:
+            space = Reserve(0xade0c, 0xade0c, "floating continent gauntlet skip", field.NOP())
+        # clear out the potential boss gauntlet code
         space = Reserve(0xadd43, 0xaddb3, "floating continent boss gauntlet", field.NOP())
-        space.write(
-            # add Kefka laugh
-            field.PlaySoundEffect(205),
-            field.Pause(1),
-            field.EntityAct(kefka_npc_id, True,
-                field_entity.AnimateFingerUp(),
-            ),
-            field.Pause(0.25),
-            field.EntityAct(kefka_npc_id, True,
-                field_entity.AnimateFingerWag(),
-            ),
-            field.Pause(0.25),
-            field.EntityAct(kefka_npc_id, True,
-                field_entity.AnimateFingerUp(),
-            ),
-            field.Pause(0.25),
-            field.EntityAct(kefka_npc_id, True,
-                field_entity.AnimateFingerWag(),
-            ),
-            # Play Fierce Battle song
-            field.StartSong(0x33),
-            # Continue playing it during fights
-            field.SetEventBit(event_bit.CONTINUE_MUSIC_DURING_BATTLE),
-            field.InvokeBattle(boss_slots[0]),
-            field.FadeInScreen(),
-            field.WaitForFade(),
-            # Call statue glow animation x3
-            field.MultipleCalls(3, 0xae46f),
-            field.Pause(1),
-            field.EntityAct(kefka_npc_id, True,
-                field_entity.AnimateFingerUp(),
-            ),
-            field.Pause(0.25),
-            field.EntityAct(kefka_npc_id, True,
-                field_entity.AnimateFingerWag(),
-            ),
-            field.Pause(0.25),
-            field.InvokeBattle(boss_slots[1]),
-            field.FadeInScreen(),
-            field.WaitForFade(),
-            # Call statue glow animation x3
-            field.MultipleCalls(3, 0xae46f),
-            field.Pause(1),
-            field.EntityAct(kefka_npc_id, True,
-                field_entity.AnimateFingerUp(),
-            ),
-            field.Pause(0.25),
-            field.EntityAct(kefka_npc_id, True,
-                field_entity.AnimateFingerWag(),
-            ),
-            field.Pause(0.25),
-            field.InvokeBattle(boss_slots[2]),
-            field.FadeInScreen(),
-            field.WaitForFade(),
-            field.Pause(0.5),
-            # Allow other songs to start playing again
-            field.ClearEventBit(event_bit.CONTINUE_MUSIC_DURING_BATTLE),
-            # branch to finish Catastrophe cutcscene
-            field.Branch(0xade0f),
-        )
+        # and only write it when location gating 2 specified
+        if self.args.location_gating2:
+            # Gauntlet bosses
+            boss_slots = [
+                name_pack["Doom"],
+                name_pack["Goddess"],
+                name_pack["Poltrgeist"],
+            ]
+            # shuffle their order
+            import random
+            random.shuffle(boss_slots)
+            
+            # write out the cutscene sequence before ejected by Kefka
+            space.write(
+                # add Kefka laugh
+                field.PlaySoundEffect(205),
+                field.Pause(1),
+                field.EntityAct(kefka_npc_id, True,
+                    field_entity.AnimateFingerUp(),
+                ),
+                field.Pause(0.25),
+                field.EntityAct(kefka_npc_id, True,
+                    field_entity.AnimateFingerWag(),
+                ),
+                field.Pause(0.25),
+                field.EntityAct(kefka_npc_id, True,
+                    field_entity.AnimateFingerUp(),
+                ),
+                field.Pause(0.25),
+                field.EntityAct(kefka_npc_id, True,
+                    field_entity.AnimateFingerWag(),
+                ),
+                # Play Fierce Battle song
+                field.StartSong(0x33),
+                # Continue playing it during fights
+                field.SetEventBit(event_bit.CONTINUE_MUSIC_DURING_BATTLE),
+                field.InvokeBattle(boss_slots[0]),
+                field.FadeInScreen(),
+                field.WaitForFade(),
+                # Call statue glow animation x3
+                field.MultipleCalls(3, 0xae46f),
+                field.Pause(1),
+                field.EntityAct(kefka_npc_id, True,
+                    field_entity.AnimateFingerUp(),
+                ),
+                field.Pause(0.25),
+                field.EntityAct(kefka_npc_id, True,
+                    field_entity.AnimateFingerWag(),
+                ),
+                field.Pause(0.25),
+                field.InvokeBattle(boss_slots[1]),
+                field.FadeInScreen(),
+                field.WaitForFade(),
+                # Call statue glow animation x3
+                field.MultipleCalls(3, 0xae46f),
+                field.Pause(1),
+                field.EntityAct(kefka_npc_id, True,
+                    field_entity.AnimateFingerUp(),
+                ),
+                field.Pause(0.25),
+                field.EntityAct(kefka_npc_id, True,
+                    field_entity.AnimateFingerWag(),
+                ),
+                field.Pause(0.25),
+                field.InvokeBattle(boss_slots[2]),
+                field.FadeInScreen(),
+                field.WaitForFade(),
+                field.Pause(0.5),
+                # Allow other songs to start playing again
+                field.ClearEventBit(event_bit.CONTINUE_MUSIC_DURING_BATTLE),
+                # branch to finish Catastrophe cutcscene
+                field.Branch(0xade0d),
+            )
 
         space = Reserve(0xade0f, 0xade11, "floating continent statues gestahl has goose bumps dialog", field.NOP())
 
