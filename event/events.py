@@ -197,7 +197,7 @@ class Events():
                 # if Narshe Battle, do special processing first before the algorithm to add non-starting characters
                 elif event.name() == "Narshe Battle":
                     # give a 50/50 chance to reward a random available character (non-starting party)
-                    if random.randint(1,100) > 50:
+                    if random.randint(0,1) == 0:
                         # get random available character
                         narshe_battle_character = self.characters.get_random_available()
                         # add this character to set of unavailable to reward
