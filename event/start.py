@@ -225,8 +225,34 @@ class Start(Event):
                 field.AddItem(id_name[junk_id], sound_effect = False)
             ]
 
+        # If doing Practice mod with all items settting 
+        if self.args.praca:
+            from objectives.results.throwables import THROWABLES
+            from objectives.results.restoratives import RESTORATIVES
+            i = 1
+            while i <= 6:
+                for item_id in id_name:
+                    # Do not give any "Junk" AKA Tier 0 items (if a low-equipment run, can use default stuff)
+                    # Do not give Throwables or Restoratives (can use an objective instead)
+                    # Do not give CursedShld or Rename Card
+                    # Do not give > 1 tool
+                    # Do not give any relics other than:
+                    # RunningShoes, Cherub Down, DragoonBoots, Earrings, Atlas Armlet, Blizzard Orb, Rage Ring
+                    # Hero Ring, Ribbon, Muscle Belt, Crystal Orb, Gold Hairpin, Economizer, Gauntlet, GenjiGlove,
+                    # Hyper Wrist, Offering, Beads, Gem Box, Dragon Horn, Merit Award, Memento Ring, Safety Bit,
+                    # Marvel Shoes, Sniper Sight, Wall Ring, True Knight
+                    ignore_items = ["Goggles", "Star Pendant", "Amulet", "White Cape", "Jewel Ring", "Fairy Ring", "Barrier Ring"
+                                    "MithrilGlove", "Guard Ring", "Cure Ring", "Zephyr Cape", "Czarina Ring", "Cursed Ring", 
+                                    "Sneak Ring", "Pod Bracelet", "Thief Glove", "Black Belt", "Coin Toss", "FakeMustache", "Relic Ring", 
+                                    "Moogle Charm", "Charm Bangle", "Back Guard", "Gale Hairpin", "Exp. Egg", "Tintinabar", "Sprint Shoes",
+                                    "Rename Card", "Cursed Shld"]
+                    if id_name[item_id] not in junk and id_name[item_id] not in THROWABLES and id_name[item_id] not in RESTORATIVES and id_name[item_id] not in tools and id_name[item_id] not in ignore_items:
+                        src += [
+                            field.AddItem(id_name[item_id], sound_effect = False)
+                        ]
+                i += 1
         # If doing Practice mod, but user requested not all items, randomize the set of starting items
-        if self.args.prac3:
+        elif self.args.prac:
             from data.item_names import name_id
             # 50% chance of 1 Megalixir or not
             if random.randint(0,1) == 0:
@@ -238,9 +264,10 @@ class Start(Event):
                 src += [
                     field.AddItem(name_id["Paladin Shld"], sound_effect = False),
                 ]
-            # Do we simulate opening 50 chests?
+            # Do we simulate opening 60 chests?
             # give consumables separately
             # 50 is enough so that we'll get lots of decent items in other tiers
+            # and we give other specific items too above & beyond these 50
             i = 1
             while i <= 50:
                 # don't grab chest from tier 0-4 as they're consumable items, we will distribute them differently, 
@@ -264,6 +291,7 @@ class Start(Event):
                     ]
                 # 4 50% chances of getting status clearing items & Elixir, X-Potion, X-Ether
                 # Always give 4 Earrings
+                # Always give 4 shields (not Cursed or Paladin)
                 if i <= 4:
                     if random.randint(0,1) == 0:
                         src += [
@@ -308,32 +336,13 @@ class Start(Event):
                     src += [
                         field.AddItem(name_id["Earrings"], sound_effect = False),
                     ]
-                i += 1
-        # If doing Practice mod with all items settting 
-        elif self.args.prac:
-            from objectives.results.throwables import THROWABLES
-            from objectives.results.restoratives import RESTORATIVES
-            i = 1
-            while i <= 6:
-                for item_id in id_name:
-                    # Do not give any "Junk" AKA Tier 0 items (if a low-equipment run, can use default stuff)
-                    # Do not give Throwables or Restoratives (can use an objective instead)
-                    # Do not give CursedShld or Rename Card
-                    # Do not give > 1 tool
-                    # Do not give any relics other than:
-                    # RunningShoes, Cherub Down, DragoonBoots, Earrings, Atlas Armlet, Blizzard Orb, Rage Ring
-                    # Hero Ring, Ribbon, Muscle Belt, Crystal Orb, Gold Hairpin, Economizer, Gauntlet, GenjiGlove,
-                    # Hyper Wrist, Offering, Beads, Gem Box, Dragon Horn, Merit Award, Memento Ring, Safety Bit,
-                    # Marvel Shoes, Sniper Sight, Wall Ring, True Knight
-                    ignore_items = ["Goggles", "Star Pendant", "Amulet", "White Cape", "Jewel Ring", "Fairy Ring", "Barrier Ring"
-                                    "MithrilGlove", "Guard Ring", "Cure Ring", "Zephyr Cape", "Czarina Ring", "Cursed Ring", 
-                                    "Sneak Ring", "Pod Bracelet", "Thief Glove", "Black Belt", "Coin Toss", "FakeMustache", "Relic Ring", 
-                                    "Moogle Charm", "Charm Bangle", "Back Guard", "Gale Hairpin", "Exp. Egg", "Tintinabar", "Sprint Shoes",
-                                    "Rename Card", "Cursed Shld"]
-                    if id_name[item_id] not in junk and id_name[item_id] not in THROWABLES and id_name[item_id] not in RESTORATIVES and id_name[item_id] not in tools and id_name[item_id] not in ignore_items:
-                        src += [
-                            field.AddItem(id_name[item_id], sound_effect = False)
-                        ]
+                    # pick a random shield, will convert CursedShld/PaladinShld to MithrilShld
+                    shield = random.randint(name_id["Buckler"],name_id["Force Shld"])
+                    if shield == name_id["Cursed Shld"] or shield == name_id["Paladin Shld"]:
+                        shield = name_id["Mithril Shld"]
+                    src += [
+                        field.AddItem(shield, sound_effect = False),
+                    ]
                 i += 1
 
         if self.args.debug:

@@ -41,7 +41,7 @@ def process(args):
         args.remove_learnable_spell_ids.append(spell_id["Life 2"])
         
     # if a No Calmness practice, remove Life 3
-    if args.prac2:
+    if args.pracnc:
         args.remove_learnable_spell_ids.append(spell_id["Life 3"])
 
     if args.remove_learnable_spells:
