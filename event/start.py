@@ -266,16 +266,16 @@ class Start(Event):
                 ]
             # Do we simulate opening 60 chests?
             # give consumables separately
-            # 50 is enough so that we'll get lots of decent items in other tiers
-            # and we give other specific items too above & beyond these 50
+            # 40 is enough so that we'll get lots of decent items in other tiers
+            # and we give other specific items too above & beyond these 40
             i = 1
-            while i <= 50:
+            while i <= 40:
                 # don't grab chest from tier 0-4 as they're consumable items, we will distribute them differently, 
                 # otherwise grab a random item from tiers 5-9, weighted as follows: 10, 20, 25, 30, 15
                 # this code copied from random_tiered function to return an item based on random tier, but updated slightly to fit above criteria
                 from data.chest_item_tiers import tiers as chesttiers, tier_s_distribution
                 from utils.weighted_random import weighted_random
-                weights = [0, 0, 0, 0, 0, 0.10, 0.20, 0.25, 0.30, 0.15]
+                weights = [0, 0, 0, 0, 0, 0.10, 0.25, 0.25, 0.30, 0.10]
                 random_tier = weighted_random(weights)
                 random_tier_index = random.randrange(5,9)
                 # always use equal distribution
