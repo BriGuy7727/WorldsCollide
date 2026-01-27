@@ -282,18 +282,46 @@ class Items():
 
         # overwrite imperial banquet dialogs (1769-1830) with receive item dialogs
         # skip banquet dialogs that are too short (must be >=23 for longest item names)
-        self.available_dialogs = list(range(1769, 1777))
-        self.available_dialogs.extend(list(range(1782, 1801)))
-        self.available_dialogs.extend(list(range(1802, 1804)))
-        self.available_dialogs.extend(list(range(1805, 1818)))
-        self.available_dialogs.extend(list(range(1820, 1822)))
-        self.available_dialogs.append(1823)
-        self.available_dialogs.extend(list(range(1825, 1830)))
+        self.available_dialogs = list(range(1769, 1777))       # 8
+        self.available_dialogs.extend(list(range(1782, 1801))) # 19
+        self.available_dialogs.extend(list(range(1802, 1804))) # 2
+        self.available_dialogs.extend(list(range(1805, 1818))) # 13
+        self.available_dialogs.extend(list(range(1820, 1822))) # 2
+        self.available_dialogs.append(1823)                    # 1
+        self.available_dialogs.extend(list(range(1825, 1830))) # 5
+        # add additional dialogues so that all 254 items can be received
+        # NOTE: be sure to avoid NPC tips dialogue over-rides
+        # NOTE: also be sure to avoid dialogue < 23 characters for longest item names?
+        self.available_dialogs.extend(list(range(11, 20)))   # 9
+        self.available_dialogs.extend(list(range(22, 30)))   # 8
+        self.available_dialogs.extend(list(range(36, 49)))   # 13
+        self.available_dialogs.extend(list(range(57, 66)))   # 9
+        self.available_dialogs.extend(list(range(67, 71)))   # 4
+        self.available_dialogs.extend(list(range(72, 80)))   # 8
+        self.available_dialogs.extend(list(range(113, 117))) # 4
+        self.available_dialogs.extend(list(range(118, 122))) # 4
+        self.available_dialogs.extend(list(range(123, 126))) # 3
+        self.available_dialogs.extend(list(range(127, 130))) # 3
+        self.available_dialogs.extend(list(range(133, 141))) # 8
+        self.available_dialogs.extend(list(range(146, 148))) # 2
+        self.available_dialogs.extend(list(range(165, 169))) # 4
+        self.available_dialogs.extend(list(range(186, 190))) # 4
+        self.available_dialogs.extend(list(range(191, 198))) # 7
+        self.available_dialogs.extend(list(range(237, 245))) # 8
+        self.available_dialogs.extend(list(range(250, 266))) # 16
+        self.available_dialogs.extend(list(range(276, 286))) # 10
+        self.available_dialogs.extend(list(range(298, 313))) # 15
+        self.available_dialogs.extend(list(range(314, 320))) # 6
+        self.available_dialogs.extend(list(range(323, 355))) # 22
+        self.available_dialogs.extend(list(range(370, 407))) # 37
 
-        # generate receive item dialogs for good items
+        # generate receive item dialogs for all items
         self.receive_dialogs = {}
-        for item_id in self.GOOD:
-            self.add_receive_dialog(item_id)
+        # add a Received <item>! dialog for every item in the game
+        for item_id in id_name:
+            # do not add dialog for Empty
+            if item_id is not name_id["Empty"]:
+                self.add_receive_dialog(item_id)
 
         self.moogle_starting_equipment()
 

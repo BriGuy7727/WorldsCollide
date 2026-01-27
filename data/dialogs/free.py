@@ -256,3 +256,17 @@ multi_line_battle_dialogs = [
     #254, # Uwaoo~!!<wait for key><end>
     #255, # <end>
 ]
+
+# listing out all of the non-battle dialog numbers that are not used in Worlds Collide
+# NOTE: NPC tips can be found in dialogs.py
+unused_dialogs = [
+    11,     # WEDGE: Let’s put her on point.\nNo sense taking any risks.\nForward!
+    12,     # WEDGE: The Esper’s gotta be in here.\nMove out!
+    13,     # GUARD: Imperial Magitek Armor?\nNot even Narshe’s safe anymore!
+    14,     # GUARD: Machine-riding,\nself-important swine!\nTake this!
+    15,     # GUARD: Narshe’s freedom depends on us!
+    16,     # WEDGE: According to our source, the frozen Esper was found in a new mine shaft.\n…Maybe this one…
+    17,     # VICKS: I’ll handle this.\nStand back!
+    18,     # GUARD: We’ve got ’em trapped, now!
+    19,     # GUARD: We must defend the mines!
+]
